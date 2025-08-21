@@ -1,4 +1,4 @@
-import PointModel from '../../../../models/geometry/PointModel';
+import PointModel from '../../../models/geometry/PointModel';
 
 export default class CanvanContext {
 	scale = 1;

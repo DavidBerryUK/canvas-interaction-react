@@ -1,4 +1,4 @@
-import PointModel from '../../../../models/geometry/PointModel';
+import PointModel from '../../../models/geometry/PointModel';
 import type CanvanContext from '../models/canvasContext';
 
 const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
@@ -13,10 +13,8 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 		context.lastMouse = new PointModel(e.clientX - rect.left, e.clientY - rect.top);
 
 		if (context.isDragging) {
-			const dx = e.clientX - context.last.x;
-			const dy = e.clientY - context.last.y;
-			context.target.x += dx;
-			context.target.y += dy;
+			const delta = new PointModel(e.clientX - context.last.x, e.clientY - context.last.y);
+			context.target = context.target.cloneWithAdd(delta);
 			context.last = new PointModel(e.clientX, e.clientY);
 		}
 	};
@@ -29,12 +27,10 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 		e.preventDefault();
 
 		const rect = canvasRef.current!.getBoundingClientRect();
-		const cursorX = e.clientX - rect.left;
-		const cursorY = e.clientY - rect.top;
+		const cursor = new PointModel(e.clientX - rect.left, e.clientY - rect.top);
 
 		// Convert cursor to world coords before zoom
-		const worldX = (cursorX - context.target.x) / context.targetScale;
-		const worldY = (cursorY - context.target.y) / context.targetScale;
+		const world = new PointModel((cursor.x - context.target.x) / context.targetScale, (cursor.y - context.target.y) / context.targetScale);
 
 		// Apply zoom
 		const zoomIntensity = 0.0015;
@@ -42,7 +38,7 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 		context.targetScale *= zoom;
 
 		// Adjust offset so cursor stays fixed
-		context.target = new PointModel(cursorX - worldX * context.targetScale, cursorY - worldY * context.targetScale);
+		context.target = new PointModel(cursor.x - world.x * context.targetScale, cursor.y - world.y * context.targetScale);
 	};
 
 	return {

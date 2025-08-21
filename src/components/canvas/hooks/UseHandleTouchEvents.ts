@@ -1,4 +1,4 @@
-import PointModel from '../../../../models/geometry/PointModel';
+import PointModel from '../../../models/geometry/PointModel';
 import type CanvanContext from '../models/canvasContext';
 
 const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {

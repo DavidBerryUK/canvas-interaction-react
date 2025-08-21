@@ -23,6 +23,18 @@ export default class PointModel {
 		return new PointModel(this.x, value);
 	}
 
+	cloneWithAdd(o: PointModel): PointModel {
+		return new PointModel(this.x + o.x, this.y + o.y);
+	}
+
+	cloneWithSubtract(o: PointModel): PointModel {
+		return new PointModel(this.x - o.x, this.y - o.y);
+	}
+
+	equals(o: PointModel): boolean {
+		return this.x === o.x && this.y === o.y;
+	}
+
 	toString(): string {
 		return `(${this.x}, ${this.y})`;
 	}

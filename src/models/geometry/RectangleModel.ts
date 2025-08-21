@@ -93,4 +93,46 @@ export default class RectangleModel {
 	cloneWithHeight(value: number): RectangleModel {
 		return new RectangleModel(this.origin, this.size.cloneWithHeight(value));
 	}
+
+	//
+	// testers
+	//
+	isLeftOf(target: RectangleModel): boolean {
+		return this.right < target.left;
+	}
+
+	isRightOf(target: RectangleModel): boolean {
+		return this.left > target.right;
+	}
+
+	isAbove(target: RectangleModel): boolean {
+		return this.bottom < target.top;
+	}
+
+	isBelow(target: RectangleModel): boolean {
+		return this.top > target.bottom;
+	}
+
+	// determine if rectangle is inside another rectangle
+	//
+	isFullyContainedByRect(container: RectangleModel): boolean {
+		return (
+			this.left >= container.left &&
+			this.left <= container.right &&
+			this.right >= container.left &&
+			this.right <= container.right &&
+			this.top >= container.top &&
+			this.top <= container.bottom &&
+			this.bottom >= container.top &&
+			this.bottom <= container.bottom
+		);
+	}
+
+	isPartiallyOrFullyContainedByRect(container: RectangleModel): boolean {
+		return !(this.left > container.right || this.right < container.left || this.top > container.bottom || this.bottom < container.top);
+	}
+
+	hitTest(origin: PointModel): boolean {
+		return this.left <= origin.x && this.right >= origin.x && this.top <= origin.y && this.bottom >= origin.y;
+	}
 }
