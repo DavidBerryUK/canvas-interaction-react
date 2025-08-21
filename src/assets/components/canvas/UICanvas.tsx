@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import useDrawCanvas from './hooks/useDrawCanvas';
 import useEventHandlersMouse from './hooks/UseEventHandlersMouse';
+import useDrawCanvas from './hooks/UseDrawCanvas';
+import useEventHandlersKeyboard from './hooks/UseEventHandlersKeyboard';
 
 export class CanvanContext {
 	scale = 1;
@@ -37,6 +38,7 @@ const CanvasViewer: React.FC = () => {
 
 	const { render } = useDrawCanvas(context, canvasRef, regions);
 	const { handleMouseDownEvent, handleMouseMouseEvent, handleMouseUpEvent, handleWheelEvent } = useEventHandlersMouse(context, canvasRef);
+	const { handleKeyDownEvent } = useEventHandlersKeyboard(context, canvasRef, regions);
 
 	useEffect(() => {
 		const canvas = canvasRef.current!;
@@ -44,35 +46,6 @@ const CanvasViewer: React.FC = () => {
 		const resizeCanvas = () => {
 			canvas.width = window.innerWidth;
 			canvas.height = window.innerHeight;
-		};
-
-		// Fit-to-content logic
-		const fitToContent = () => {
-			const contentWidth = context.maxX - context.minX;
-			const contentHeight = context.maxY - context.minY;
-			const scaleX = canvas.width / contentWidth;
-			const scaleY = canvas.height / contentHeight;
-			context.targetScale = Math.min(scaleX, scaleY) * 0.9;
-			context.targetX = (canvas.width - contentWidth * context.targetScale) / 2 - context.minX * context.targetScale;
-			context.targetY = (canvas.height - contentHeight * context.targetScale) / 2 - context.minY * context.targetScale;
-		};
-
-		// Zoom-to-region
-		const zoomToRegion = (regionKey: string) => {
-			const r = regions[regionKey];
-			if (!r) return;
-			const scaleX = canvas.width / r.width;
-			const scaleY = canvas.height / r.height;
-			context.targetScale = Math.min(scaleX, scaleY) * 0.85;
-			context.targetX = (canvas.width - r.width * context.targetScale) / 2 - r.x * context.targetScale;
-			context.targetY = (canvas.height - r.height * context.targetScale) / 2 - r.y * context.targetScale;
-		};
-
-		// Reset view
-		const resetView = () => {
-			context.targetScale = 1;
-			context.targetX = 0;
-			context.targetY = 0;
 		};
 
 		const handleTouchStartEvent = (e: TouchEvent) => {
@@ -110,46 +83,6 @@ const CanvasViewer: React.FC = () => {
 				context.targetY = cursorY - worldY * context.targetScale;
 
 				context.lastDist = dist;
-			}
-		};
-
-		// --- Keyboard zoom helpers ---
-		const zoomAt = (cursorX: number, cursorY: number, zoomFactor: number) => {
-			// Convert cursor to world coords before zoom
-			const worldX = (cursorX - context.targetX) / context.targetScale;
-			const worldY = (cursorY - context.targetY) / context.targetScale;
-
-			// Apply zoom
-			context.targetScale *= zoomFactor;
-
-			// Adjust offset so cursor stays fixed
-			context.targetX = cursorX - worldX * context.targetScale;
-			context.targetY = cursorY - worldY * context.targetScale;
-		};
-
-		const handleKeyboardZoomIn = () => {
-			zoomAt(context.lastMouseX, context.lastMouseY, 1.2);
-		};
-
-		const handleKeyboardZoomOut = () => {
-			zoomAt(context.lastMouseX, context.lastMouseY, 1 / 1.2);
-		};
-
-		const handleKeyDownEvent = (e: KeyboardEvent) => {
-			if (e.key === '+') {
-				handleKeyboardZoomIn();
-			}
-			if (e.key === '-') {
-				handleKeyboardZoomOut();
-			}
-			if (e.key === '0') {
-				resetView();
-			}
-			if (e.key === 'f') {
-				fitToContent();
-			}
-			if (regions[e.key]) {
-				zoomToRegion(e.key);
 			}
 		};
 
