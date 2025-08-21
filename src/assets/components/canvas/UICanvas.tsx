@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import useDrawCanvas from './hooks/useDrawCanvas';
+import useEventHandlersMouse from './hooks/UseEventHandlersMouse';
 
 export class CanvanContext {
 	scale = 1;
@@ -35,6 +36,7 @@ const CanvasViewer: React.FC = () => {
 	const context = new CanvanContext();
 
 	const { render } = useDrawCanvas(context, canvasRef, regions);
+	const { handleMouseDownEvent, handleMouseMouseEvent, handleMouseUpEvent, handleWheelEvent } = useEventHandlersMouse(context, canvasRef);
 
 	useEffect(() => {
 		const canvas = canvasRef.current!;
@@ -71,53 +73,6 @@ const CanvasViewer: React.FC = () => {
 			context.targetScale = 1;
 			context.targetX = 0;
 			context.targetY = 0;
-		};
-
-		const handleMouseDownEvent = (e: MouseEvent) => {
-			context.isDragging = true;
-			context.lastX = e.clientX;
-			context.lastY = e.clientY;
-		};
-
-		const handleMouseMouseEvent = (e: MouseEvent) => {
-			// Track last mouse position for keyboard zoom
-			const rect = canvas.getBoundingClientRect();
-			context.lastMouseX = e.clientX - rect.left;
-			context.lastMouseY = e.clientY - rect.top;
-
-			if (context.isDragging) {
-				const dx = e.clientX - context.lastX;
-				const dy = e.clientY - context.lastY;
-				context.targetX += dx;
-				context.targetY += dy;
-				context.lastX = e.clientX;
-				context.lastY = e.clientY;
-			}
-		};
-
-		const handleMouseUpEvent = () => {
-			context.isDragging = false;
-		};
-
-		const handleWheelEvent = (e: WheelEvent) => {
-			e.preventDefault();
-
-			const rect = canvas.getBoundingClientRect();
-			const cursorX = e.clientX - rect.left;
-			const cursorY = e.clientY - rect.top;
-
-			// Convert cursor to world coords before zoom
-			const worldX = (cursorX - context.targetX) / context.targetScale;
-			const worldY = (cursorY - context.targetY) / context.targetScale;
-
-			// Apply zoom
-			const zoomIntensity = 0.0015;
-			const zoom = 1 - e.deltaY * zoomIntensity;
-			context.targetScale *= zoom;
-
-			// Adjust offset so cursor stays fixed
-			context.targetX = cursorX - worldX * context.targetScale;
-			context.targetY = cursorY - worldY * context.targetScale;
 		};
 
 		const handleTouchStartEvent = (e: TouchEvent) => {
