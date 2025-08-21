@@ -25,9 +25,6 @@ const useDrawCanvas = (
 
 		if (!canvasRef.current || !ctx) return;
 
-		console.log('Rendering canvas...');
-		console.log(canvasRef.current.width, canvasRef.current.height);
-
 		clearScene();
 		ctx.save();
 		ctx.setTransform(context.scale, 0, 0, context.scale, context.offsetX, context.offsetY);
