@@ -17,6 +17,8 @@ class CanvanContext {
 	lastDist = 0;
 	pinchMidX = 0;
 	pinchMidY = 0;
+	lastMouseX = 0; // track cursor for keyboard zoom
+	lastMouseY = 0;
 }
 
 const CanvasViewer: React.FC = () => {
@@ -130,7 +132,12 @@ const CanvasViewer: React.FC = () => {
 			context.lastY = e.clientY;
 		};
 
-		const handleMouseMoseEvent = (e: MouseEvent) => {
+		const handleMouseMouseEvent = (e: MouseEvent) => {
+			// Track last mouse position for keyboard zoom
+			const rect = canvas.getBoundingClientRect();
+			context.lastMouseX = e.clientX - rect.left;
+			context.lastMouseY = e.clientY - rect.top;
+
 			if (context.isDragging) {
 				const dx = e.clientX - context.lastX;
 				const dy = e.clientY - context.lastY;
@@ -204,17 +211,49 @@ const CanvasViewer: React.FC = () => {
 			}
 		};
 
+		// --- Keyboard zoom helpers ---
+		const zoomAt = (cursorX: number, cursorY: number, zoomFactor: number) => {
+			// Convert cursor to world coords before zoom
+			const worldX = (cursorX - context.targetX) / context.targetScale;
+			const worldY = (cursorY - context.targetY) / context.targetScale;
+
+			// Apply zoom
+			context.targetScale *= zoomFactor;
+
+			// Adjust offset so cursor stays fixed
+			context.targetX = cursorX - worldX * context.targetScale;
+			context.targetY = cursorY - worldY * context.targetScale;
+		};
+
+		const handleKeyboardZoomIn = () => {
+			zoomAt(context.lastMouseX, context.lastMouseY, 1.2);
+		};
+
+		const handleKeyboardZoomOut = () => {
+			zoomAt(context.lastMouseX, context.lastMouseY, 1 / 1.2);
+		};
+
 		const handleKeyDownEvent = (e: KeyboardEvent) => {
-			if (e.key === '+') context.targetScale *= 1.2;
-			if (e.key === '-') context.targetScale /= 1.2;
-			if (e.key === '0') resetView();
-			if (e.key === 'f') fitToContent();
-			if (regions[e.key]) zoomToRegion(e.key);
+			if (e.key === '+') {
+				handleKeyboardZoomIn();
+			}
+			if (e.key === '-') {
+				handleKeyboardZoomOut();
+			}
+			if (e.key === '0') {
+				resetView();
+			}
+			if (e.key === 'f') {
+				fitToContent();
+			}
+			if (regions[e.key]) {
+				zoomToRegion(e.key);
+			}
 		};
 
 		// Mouse + touch handlers
 		canvas.addEventListener('mousedown', handleMouseDownEvent);
-		canvas.addEventListener('mousemove', handleMouseMoseEvent);
+		canvas.addEventListener('mousemove', handleMouseMouseEvent);
 		window.addEventListener('mouseup', handleMouseUpEvent);
 		canvas.addEventListener('wheel', handleWheelEvent, { passive: false });
 		// Pinch zoom
