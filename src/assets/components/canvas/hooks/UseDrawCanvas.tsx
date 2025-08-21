@@ -111,28 +111,6 @@ const useDrawCanvas = (
 		}
 
 		ctx.restore();
-
-		// --- Instructions overlay (not affected by zoom/pan) ---
-		ctx.fillStyle = 'rgba(0,0,0,0.6)';
-		ctx.fillRect(10, 10, 280, 180);
-		ctx.fillStyle = 'white';
-		ctx.font = '14px sans-serif';
-		ctx.textBaseline = 'top';
-		const instructions = [
-			'Controls:',
-			'🖱️ Drag: Pan',
-			'🖱️ Wheel: Zoom at cursor',
-			'⌨️ +/-: Zoom in/out',
-			'⌨️ 0: zoom 100%',
-			'⌨️ f: Fit to screen',
-			'⌨️ 1-4: Zoom to region',
-			'📱 Pinch: Zoom on mobile',
-			'📱 Drag: Pan on mobile',
-		];
-
-		instructions.forEach((line, i) => {
-			ctx.fillText(line, 20, 20 + i * 18);
-		});
 	};
 
 	return { render };
