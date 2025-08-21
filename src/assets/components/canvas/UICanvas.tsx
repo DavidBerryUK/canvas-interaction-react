@@ -4,27 +4,7 @@ import useDrawCanvas from './hooks/UseDrawCanvas';
 import useEventHandlersKeyboard from './hooks/UseEventHandlersKeyboard';
 import useHandleTouchEvents from './hooks/UseHandleTouchEvents';
 import useHandleCanvasResize from './hooks/UseHandleCanvasResize';
-
-export class CanvanContext {
-	scale = 1;
-	targetScale = 1;
-	offsetX = 0;
-	offsetY = 0;
-	targetX = 0;
-	targetY = 0;
-	isDragging = false;
-	lastX = 0;
-	lastY = 0;
-	minX = Infinity;
-	minY = Infinity;
-	maxX = -Infinity;
-	maxY = -Infinity;
-	lastDist = 0;
-	pinchMidX = 0;
-	pinchMidY = 0;
-	lastMouseX = 0; // track cursor for keyboard zoom
-	lastMouseY = 0;
-}
+import CanvanContext from './models/canvasContext';
 
 // Predefined zoom regions
 const regions: Record<string, { x: number; y: number; width: number; height: number }> = {

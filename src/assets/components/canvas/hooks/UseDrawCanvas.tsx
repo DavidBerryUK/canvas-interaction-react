@@ -1,4 +1,4 @@
-import type { CanvanContext } from '../UICanvas';
+import type CanvanContext from '../models/canvasContext';
 
 const useDrawCanvas = (
 	context: CanvanContext,
@@ -16,6 +16,7 @@ const useDrawCanvas = (
 	};
 
 	const clearScene = () => {
+		if (!canvas || !ctx) return;
 		ctx.clearRect(0, 0, canvas!.width, canvas!.height);
 	};
 
@@ -27,19 +28,21 @@ const useDrawCanvas = (
 
 		clearScene();
 		ctx.save();
-		ctx.setTransform(context.scale, 0, 0, context.scale, context.offsetX, context.offsetY);
+		ctx.setTransform(context.scale, 0, 0, context.scale, context.offset.x, context.offset.y);
 		drawScene();
 		ctx.restore();
 
 		// Smooth transition
 		context.scale += (context.targetScale - context.scale) * 0.15;
-		context.offsetX += (context.targetX - context.offsetX) * 0.15;
-		context.offsetY += (context.targetY - context.offsetY) * 0.15;
+		context.offset.x += (context.target.x - context.offset.x) * 0.15;
+		context.offset.y += (context.target.y - context.offset.y) * 0.15;
 
 		requestAnimationFrame(render);
 	};
 
 	const drawScene = () => {
+		if (!ctx) return;
+
 		ctx.fillStyle = 'red';
 		ctx.fillRect(50, 50, 200, 200);
 		updateBounds(50, 50, 200, 200);

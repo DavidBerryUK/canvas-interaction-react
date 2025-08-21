@@ -1,4 +1,5 @@
-import type { CanvanContext } from '../UICanvas';
+import PointModel from '../../../../models/geometry/PointModel';
+import type CanvanContext from '../models/canvasContext';
 
 const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleTouchStartEvent = (e: TouchEvent) => {
@@ -8,8 +9,7 @@ const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject
 			context.lastDist = Math.hypot(dx, dy);
 
 			// Midpoint in screen coords
-			context.pinchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-			context.pinchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+			context.pinchMid = new PointModel((e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
 		}
 	};
 
@@ -24,16 +24,15 @@ const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject
 
 			// Convert midpoint to world coords before zoom
 			const rect = canvasRef.current!.getBoundingClientRect();
-			const cursorX = context.pinchMidX - rect.left;
-			const cursorY = context.pinchMidY - rect.top;
-			const worldX = (cursorX - context.targetX) / context.targetScale;
-			const worldY = (cursorY - context.targetY) / context.targetScale;
+			const cursorX = context.pinchMid.x - rect.left;
+			const cursorY = context.pinchMid.y - rect.top;
+			const worldX = (cursorX - context.target.x) / context.targetScale;
+			const worldY = (cursorY - context.target.y) / context.targetScale;
 
 			context.targetScale *= zoom;
 
 			// Adjust offset so pinch midpoint stays fixed
-			context.targetX = cursorX - worldX * context.targetScale;
-			context.targetY = cursorY - worldY * context.targetScale;
+			context.target = new PointModel(cursorX - worldX * context.targetScale, cursorY - worldY * context.targetScale);
 
 			context.lastDist = dist;
 		}

@@ -1,25 +1,23 @@
-import type { CanvanContext } from '../UICanvas';
+import PointModel from '../../../../models/geometry/PointModel';
+import type CanvanContext from '../models/canvasContext';
 
 const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleMouseDownEvent = (e: MouseEvent) => {
 		context.isDragging = true;
-		context.lastX = e.clientX;
-		context.lastY = e.clientY;
+		context.last = new PointModel(e.clientX, e.clientY);
 	};
 
 	const handleMouseMouseEvent = (e: MouseEvent) => {
 		// Track last mouse position for keyboard zoom
 		const rect = canvasRef.current!.getBoundingClientRect();
-		context.lastMouseX = e.clientX - rect.left;
-		context.lastMouseY = e.clientY - rect.top;
+		context.lastMouse = new PointModel(e.clientX - rect.left, e.clientY - rect.top);
 
 		if (context.isDragging) {
-			const dx = e.clientX - context.lastX;
-			const dy = e.clientY - context.lastY;
-			context.targetX += dx;
-			context.targetY += dy;
-			context.lastX = e.clientX;
-			context.lastY = e.clientY;
+			const dx = e.clientX - context.last.x;
+			const dy = e.clientY - context.last.y;
+			context.target.x += dx;
+			context.target.y += dy;
+			context.last = new PointModel(e.clientX, e.clientY);
 		}
 	};
 
@@ -35,8 +33,8 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 		const cursorY = e.clientY - rect.top;
 
 		// Convert cursor to world coords before zoom
-		const worldX = (cursorX - context.targetX) / context.targetScale;
-		const worldY = (cursorY - context.targetY) / context.targetScale;
+		const worldX = (cursorX - context.target.x) / context.targetScale;
+		const worldY = (cursorY - context.target.y) / context.targetScale;
 
 		// Apply zoom
 		const zoomIntensity = 0.0015;
@@ -44,8 +42,7 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 		context.targetScale *= zoom;
 
 		// Adjust offset so cursor stays fixed
-		context.targetX = cursorX - worldX * context.targetScale;
-		context.targetY = cursorY - worldY * context.targetScale;
+		context.target = new PointModel(cursorX - worldX * context.targetScale, cursorY - worldY * context.targetScale);
 	};
 
 	return {
