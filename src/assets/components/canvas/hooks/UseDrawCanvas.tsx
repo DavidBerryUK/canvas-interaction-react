@@ -29,7 +29,9 @@ const useDrawCanvas = (
 		clearScene();
 		ctx.save();
 		ctx.setTransform(context.scale, 0, 0, context.scale, context.offset.x, context.offset.y);
+		drawGrid();
 		drawScene();
+
 		ctx.restore();
 
 		// Smooth transition
@@ -38,6 +40,44 @@ const useDrawCanvas = (
 		context.offset.y += (context.target.y - context.offset.y) * 0.15;
 
 		requestAnimationFrame(render);
+	};
+
+	const drawGrid = () => {
+		if (!ctx || !canvas) return;
+
+		// Grid spacing in world coordinates
+		const gridSize = 50;
+
+		// Convert canvas corners into world coordinates
+		const invScale = 1 / context.scale;
+		const left = -context.offset.x * invScale;
+		const top = -context.offset.y * invScale;
+		const right = left + canvas.width * invScale;
+		const bottom = top + canvas.height * invScale;
+
+		// Snap start positions to nearest grid line
+		const startX = Math.floor(left / gridSize) * gridSize;
+		const endX = Math.ceil(right / gridSize) * gridSize;
+		const startY = Math.floor(top / gridSize) * gridSize;
+		const endY = Math.ceil(bottom / gridSize) * gridSize;
+
+		ctx.beginPath();
+		ctx.strokeStyle = '#ddd';
+		ctx.lineWidth = 1 / context.scale; // keep grid thin at any zoom
+
+		// Vertical lines
+		for (let x = startX; x <= endX; x += gridSize) {
+			ctx.moveTo(x, top);
+			ctx.lineTo(x, bottom);
+		}
+
+		// Horizontal lines
+		for (let y = startY; y <= endY; y += gridSize) {
+			ctx.moveTo(left, y);
+			ctx.lineTo(right, y);
+		}
+
+		ctx.stroke();
 	};
 
 	const drawScene = () => {
@@ -69,6 +109,30 @@ const useDrawCanvas = (
 			ctx.font = '16px Arial';
 			ctx.fillText(key, r.x + 4, r.y + 16);
 		}
+
+		ctx.restore();
+
+		// --- Instructions overlay (not affected by zoom/pan) ---
+		ctx.fillStyle = 'rgba(0,0,0,0.6)';
+		ctx.fillRect(10, 10, 280, 180);
+		ctx.fillStyle = 'white';
+		ctx.font = '14px sans-serif';
+		ctx.textBaseline = 'top';
+		const instructions = [
+			'Controls:',
+			'🖱️ Drag: Pan',
+			'🖱️ Wheel: Zoom at cursor',
+			'⌨️ +/-: Zoom in/out',
+			'⌨️ 0: zoom 100%',
+			'⌨️ f: Fit to screen',
+			'⌨️ 1-4: Zoom to region',
+			'📱 Pinch: Zoom on mobile',
+			'📱 Drag: Pan on mobile',
+		];
+
+		instructions.forEach((line, i) => {
+			ctx.fillText(line, 20, 20 + i * 18);
+		});
 	};
 
 	return { render };
