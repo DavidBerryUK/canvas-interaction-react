@@ -1,15 +1,15 @@
-import PointModel from '../../../models/geometry/PointModel';
+import Point from '../../../models/geometry/Point';
 
 export default class CanvanContext {
 	scale = 1;
 	targetScale = 1;
 	isDragging = false;
 	lastDist = 0;
-	offset: PointModel = PointModel.zero;
-	target: PointModel = PointModel.zero;
-	last: PointModel = PointModel.zero;
-	lastMouse: PointModel = PointModel.zero;
-	pinchMid: PointModel = PointModel.zero;
+	offset: Point = Point.zero;
+	target: Point = Point.zero;
+	last: Point = Point.zero;
+	lastMouse: Point = Point.zero;
+	pinchMid: Point = Point.zero;
 
 	minX = Infinity;
 	minY = Infinity;

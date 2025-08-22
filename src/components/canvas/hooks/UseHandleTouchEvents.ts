@@ -1,4 +1,4 @@
-import PointModel from '../../../models/geometry/PointModel';
+import Point from '../../../models/geometry/Point';
 import type CanvanContext from '../models/canvasContext';
 
 const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
@@ -9,7 +9,7 @@ const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject
 			context.lastDist = Math.hypot(dx, dy);
 
 			// Midpoint in screen coords
-			context.pinchMid = new PointModel((e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
+			context.pinchMid = new Point((e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
 		}
 	};
 
@@ -32,7 +32,7 @@ const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject
 			context.targetScale *= zoom;
 
 			// Adjust offset so pinch midpoint stays fixed
-			context.target = new PointModel(cursorX - worldX * context.targetScale, cursorY - worldY * context.targetScale);
+			context.target = new Point(cursorX - worldX * context.targetScale, cursorY - worldY * context.targetScale);
 
 			context.lastDist = dist;
 		}

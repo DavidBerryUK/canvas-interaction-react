@@ -1,5 +1,5 @@
-import PointModel from '../../../models/geometry/PointModel';
-import SizeModel from '../../../models/geometry/SizeModel';
+import Point from '../../../models/geometry/Point';
+import Size from '../../../models/geometry/Size';
 import type CanvanContext from '../models/canvasContext';
 
 const useEventHandlersKeyboard = (
@@ -10,14 +10,14 @@ const useEventHandlersKeyboard = (
 	// Reset view
 	const resetView = () => {
 		context.targetScale = 1;
-		context.target = PointModel.zero;
+		context.target = Point.zero;
 	};
 	// Fit-to-content logic
 	const fitToContent = () => {
-		const contentSize = new SizeModel(context.maxX - context.minX, context.maxY - context.minY);
-		const scale = new PointModel(canvasRef.current!.width / contentSize.width, canvasRef.current!.height / contentSize.height);
+		const contentSize = new Size(context.maxX - context.minX, context.maxY - context.minY);
+		const scale = new Point(canvasRef.current!.width / contentSize.width, canvasRef.current!.height / contentSize.height);
 		context.targetScale = Math.min(scale.x, scale.y) * 0.9;
-		context.target = new PointModel(
+		context.target = new Point(
 			(canvasRef.current!.width - contentSize.width * context.targetScale) / 2 - context.minX * context.targetScale,
 			(canvasRef.current!.height - contentSize.height * context.targetScale) / 2 - context.minY * context.targetScale
 		);
@@ -27,22 +27,22 @@ const useEventHandlersKeyboard = (
 	const zoomToRegion = (regionKey: string) => {
 		const r = regions[regionKey];
 		if (!r) return;
-		const scale = new PointModel(canvasRef.current!.width / r.width, canvasRef.current!.height / r.height);
+		const scale = new Point(canvasRef.current!.width / r.width, canvasRef.current!.height / r.height);
 		context.targetScale = Math.min(scale.x, scale.y) * 0.85;
-		context.target = new PointModel(
+		context.target = new Point(
 			(canvasRef.current!.width - r.width * context.targetScale) / 2 - r.x * context.targetScale,
 			(canvasRef.current!.height - r.height * context.targetScale) / 2 - r.y * context.targetScale
 		);
 	};
 
 	// --- Keyboard zoom helpers ---
-	const zoomAt = (cursor: PointModel, zoomFactor: number) => {
+	const zoomAt = (cursor: Point, zoomFactor: number) => {
 		// Convert cursor to world coords before zoom
-		const world = new PointModel((cursor.x - context.target.x) / context.targetScale, (cursor.y - context.target.y) / context.targetScale);
+		const world = new Point((cursor.x - context.target.x) / context.targetScale, (cursor.y - context.target.y) / context.targetScale);
 		// Apply zoom
 		context.targetScale *= zoomFactor;
 		// Adjust offset so cursor stays fixed
-		context.target = new PointModel(cursor.x - world.x * context.targetScale, (context.target.y = cursor.y - world.y * context.targetScale));
+		context.target = new Point(cursor.x - world.x * context.targetScale, (context.target.y = cursor.y - world.y * context.targetScale));
 	};
 
 	const handleKeyboardZoomIn = () => {
