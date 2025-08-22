@@ -168,10 +168,13 @@ export default class Rectangle {
 		);
 	}
 
-	isPartiallyOrFullyContainedByRect(container: Rectangle): boolean {
-		return !(this.left > container.right || this.right < container.left || this.top > container.bottom || this.bottom < container.top);
+	/**
+	 * Determines whether this rectangle intersects with the target rectangle.
+	 * Returns true if any part of the rectangles overlap, including edges or corners.
+	 */
+	intersects(target: Rectangle): boolean {
+		return !(this.left > target.right || this.right < target.left || this.top > target.bottom || this.bottom < target.top);
 	}
-
 	hitTest(origin: Point): boolean {
 		return this.left <= origin.x && this.right >= origin.x && this.top <= origin.y && this.bottom >= origin.y;
 	}
