@@ -5,6 +5,7 @@ import useEventHandlersKeyboard from './hooks/UseEventHandlersKeyboard';
 import useHandleTouchEvents from './hooks/UseHandleTouchEvents';
 import useHandleCanvasResize from './hooks/UseHandleCanvasResize';
 import CanvanContext from './models/canvasContext';
+import DemoSceneProvider from '../../sceneProviders/demo/DemoSceneProvider';
 
 // Predefined zoom regions
 const regions: Record<string, { x: number; y: number; width: number; height: number }> = {
@@ -17,8 +18,9 @@ const regions: Record<string, { x: number; y: number; width: number; height: num
 const CanvasViewer: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const context = new CanvanContext();
+	const sceneProvider = new DemoSceneProvider();
 
-	const { render } = useDrawCanvas(context, canvasRef, regions);
+	const { render } = useDrawCanvas(context, canvasRef, sceneProvider, regions);
 	const { handleMouseDownEvent, handleMouseMouseEvent, handleMouseUpEvent, handleWheelEvent } = useEventHandlersMouse(context, canvasRef);
 	const { handleKeyDownEvent } = useEventHandlersKeyboard(context, canvasRef, regions);
 	const { handleTouchStartEvent, handleTouchMoveEvent } = useHandleTouchEvents(context, canvasRef);

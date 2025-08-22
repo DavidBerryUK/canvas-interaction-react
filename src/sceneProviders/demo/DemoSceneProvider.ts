@@ -3,9 +3,9 @@ import DemoShape from './DemoShape';
 import Point from '../../models/geometry/Point';
 import Rectangle from '../../models/geometry/Rectangle';
 import Size from '../../models/geometry/Size';
-import type IDemoSceneProvider from '../../components/canvas/interfaces/ISceneProvider';
+import type ISceneProvider from '../../components/canvas/interfaces/ISceneProvider';
 
-export default class DemoSceneProvider implements IDemoSceneProvider {
+export default class DemoSceneProvider implements ISceneProvider {
 	private shapes: DemoShape[] = [];
 	private boundingRect?: Rectangle = undefined;
 
@@ -19,13 +19,27 @@ export default class DemoSceneProvider implements IDemoSceneProvider {
 		}
 		return this.boundingRect!;
 	}
-
+	private lastRenderLog = 0; // timestamp of last log in ms
 	render(ctx: CanvasRenderingContext2D, region: Rectangle): void {
-		this.shapes.forEach((shape) => {
-			if (!region.intersects(shape.rectangle)) return;
+		let total = this.shapes.length;
+		let rendered = 0;
+		let offScreen = 0;
 
-			shape.draw(ctx);
+		this.shapes.forEach((shape) => {
+			if (region.intersects(shape.rectangle)) {
+				shape.draw(ctx);
+				rendered++;
+			} else {
+				offScreen++;
+			}
 		});
+
+		const now = performance.now();
+		if (now - this.lastRenderLog > 1000) {
+			// log at most once per second
+			console.log(`DemoSceneProvider: Total=${total}, Rendered=${rendered}, Off-screen=${offScreen}`);
+			this.lastRenderLog = now;
+		}
 	}
 
 	private createDemoShapes() {

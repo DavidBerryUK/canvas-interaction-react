@@ -1,9 +1,14 @@
+import Point from '../../../models/geometry/Point';
+import Rectangle from '../../../models/geometry/Rectangle';
+import Size from '../../../models/geometry/Size';
+import type ISceneProvider from '../interfaces/ISceneProvider';
 import type CanvanContext from '../models/canvasContext';
 import useDrawGrid from './UseDrawGrid';
 
 const useDrawCanvas = (
 	context: CanvanContext,
 	canvasRef: React.RefObject<HTMLCanvasElement | null>,
+	sceneProvider: ISceneProvider | undefined,
 	regions: Record<string, { x: number; y: number; width: number; height: number }>
 ) => {
 	let canvas: HTMLCanvasElement | null;
@@ -32,7 +37,22 @@ const useDrawCanvas = (
 		ctx.save();
 		ctx.setTransform(context.scale, 0, 0, context.scale, context.offset.x, context.offset.y);
 		drawGrid(context, canvas, ctx);
-		drawScene();
+
+		if (sceneProvider) {
+			// calculate the region of the scene that will be visible in the canvas viewport
+			// calculate the region of the scene that will be visible in the canvas viewport
+			const canvasWidth = canvas.width;
+			const canvasHeight = canvas.height;
+
+			// invert the transform to get scene coordinates
+			const visibleSceneArea = new Rectangle(
+				new Point(-context.offset.x / context.scale, -context.offset.y / context.scale),
+				new Size(canvasWidth / context.scale, canvasHeight / context.scale)
+			);
+			sceneProvider.render(ctx, visibleSceneArea);
+		} else {
+			drawScene();
+		}
 
 		ctx.restore();
 
