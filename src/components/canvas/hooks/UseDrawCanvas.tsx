@@ -1,4 +1,5 @@
 import type CanvanContext from '../models/canvasContext';
+import useDrawGrid from './UseDrawGrid';
 
 const useDrawCanvas = (
 	context: CanvanContext,
@@ -7,6 +8,7 @@ const useDrawCanvas = (
 ) => {
 	let canvas: HTMLCanvasElement | null;
 	let ctx: CanvasRenderingContext2D | null;
+	const { drawGrid } = useDrawGrid();
 
 	const updateBounds = (x: number, y: number, w: number, h: number) => {
 		context.minX = Math.min(context.minX, x);
@@ -29,7 +31,7 @@ const useDrawCanvas = (
 		clearScene();
 		ctx.save();
 		ctx.setTransform(context.scale, 0, 0, context.scale, context.offset.x, context.offset.y);
-		drawGrid();
+		drawGrid(context, canvas, ctx);
 		drawScene();
 
 		ctx.restore();
@@ -40,44 +42,6 @@ const useDrawCanvas = (
 		context.offset.y += (context.target.y - context.offset.y) * 0.15;
 
 		requestAnimationFrame(render);
-	};
-
-	const drawGrid = () => {
-		if (!ctx || !canvas) return;
-
-		// Grid spacing in world coordinates
-		const gridSize = 50;
-
-		// Convert canvas corners into world coordinates
-		const invScale = 1 / context.scale;
-		const left = -context.offset.x * invScale;
-		const top = -context.offset.y * invScale;
-		const right = left + canvas.width * invScale;
-		const bottom = top + canvas.height * invScale;
-
-		// Snap start positions to nearest grid line
-		const startX = Math.floor(left / gridSize) * gridSize;
-		const endX = Math.ceil(right / gridSize) * gridSize;
-		const startY = Math.floor(top / gridSize) * gridSize;
-		const endY = Math.ceil(bottom / gridSize) * gridSize;
-
-		ctx.beginPath();
-		ctx.strokeStyle = '#ddd';
-		ctx.lineWidth = 1 / context.scale; // keep grid thin at any zoom
-
-		// Vertical lines
-		for (let x = startX; x <= endX; x += gridSize) {
-			ctx.moveTo(x, top);
-			ctx.lineTo(x, bottom);
-		}
-
-		// Horizontal lines
-		for (let y = startY; y <= endY; y += gridSize) {
-			ctx.moveTo(left, y);
-			ctx.lineTo(right, y);
-		}
-
-		ctx.stroke();
 	};
 
 	const drawScene = () => {

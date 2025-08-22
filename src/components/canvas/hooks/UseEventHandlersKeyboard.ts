@@ -54,19 +54,21 @@ const useEventHandlersKeyboard = (
 	};
 
 	const handleKeyDownEvent = (e: KeyboardEvent) => {
-		if (e.key === '+') {
-			handleKeyboardZoomIn();
+		const actions: Record<string, () => void> = {
+			'+': handleKeyboardZoomIn,
+			'-': handleKeyboardZoomOut,
+			'0': resetView,
+			f: fitToContent,
+		};
+
+		if (actions[e.key]) {
+			e.preventDefault();
+			actions[e.key]();
+			return;
 		}
-		if (e.key === '-') {
-			handleKeyboardZoomOut();
-		}
-		if (e.key === '0') {
-			resetView();
-		}
-		if (e.key === 'f') {
-			fitToContent();
-		}
+
 		if (regions[e.key]) {
+			e.preventDefault();
 			zoomToRegion(e.key);
 		}
 	};

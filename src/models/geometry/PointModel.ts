@@ -10,6 +10,10 @@ export default class PointModel {
 		return new PointModel(Infinity, Infinity);
 	}
 
+	static get fromMouseEvent(): (e: MouseEvent) => PointModel {
+		return (e: MouseEvent) => new PointModel(e.clientX, e.clientY);
+	}
+
 	constructor(x: number, y: number) {
 		this.x = x;
 		this.y = y;

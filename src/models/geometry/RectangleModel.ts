@@ -5,6 +5,10 @@ export default class RectangleModel {
 	origin: PointModel;
 	size: SizeModel;
 
+	static fromDomRect(rect: DOMRect): RectangleModel {
+		return new RectangleModel(new PointModel(rect.x, rect.y), new SizeModel(rect.width, rect.height));
+	}
+
 	static get zero(): RectangleModel {
 		return new RectangleModel(PointModel.zero, SizeModel.zero);
 	}

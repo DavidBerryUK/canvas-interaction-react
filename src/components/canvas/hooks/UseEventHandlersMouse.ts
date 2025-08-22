@@ -1,16 +1,18 @@
 import PointModel from '../../../models/geometry/PointModel';
+import RectangleModel from '../../../models/geometry/RectangleModel';
 import type CanvanContext from '../models/canvasContext';
 
 const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleMouseDownEvent = (e: MouseEvent) => {
 		context.isDragging = true;
-		context.last = new PointModel(e.clientX, e.clientY);
+		context.last = PointModel.fromMouseEvent(e);
 	};
 
 	const handleMouseMouseEvent = (e: MouseEvent) => {
 		// Track last mouse position for keyboard zoom
-		const rect = canvasRef.current!.getBoundingClientRect();
-		context.lastMouse = new PointModel(e.clientX - rect.left, e.clientY - rect.top);
+		const rect = RectangleModel.fromDomRect(canvasRef.current!.getBoundingClientRect());
+		const mousePoint = new PointModel(e.clientX, e.clientY);
+		context.lastMouse = mousePoint.cloneWithSubtract(rect.origin);
 
 		if (context.isDragging) {
 			const delta = new PointModel(e.clientX - context.last.x, e.clientY - context.last.y);
@@ -26,8 +28,9 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 	const handleWheelEvent = (e: WheelEvent) => {
 		e.preventDefault();
 
-		const rect = canvasRef.current!.getBoundingClientRect();
-		const cursor = new PointModel(e.clientX - rect.left, e.clientY - rect.top);
+		const rect = RectangleModel.fromDomRect(canvasRef.current!.getBoundingClientRect());
+		const mousePoint = new PointModel(e.clientX, e.clientY);
+		const cursor = mousePoint.cloneWithSubtract(rect.origin);
 
 		// Convert cursor to world coords before zoom
 		const world = new PointModel((cursor.x - context.target.x) / context.targetScale, (cursor.y - context.target.y) / context.targetScale);
