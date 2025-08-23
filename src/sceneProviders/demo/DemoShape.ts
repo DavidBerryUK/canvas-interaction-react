@@ -64,7 +64,7 @@ export default class DemoShape {
 
 	private drawCircle(ctx: CanvasRenderingContext2D, rect: Rectangle, fill: boolean, stroke: boolean) {
 		ctx.beginPath();
-		ctx.ellipse(rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width / 2, rect.height / 2, 0, 0, 2 * Math.PI);
+		ctx.ellipse(rect.x + rect.width / 2, rect.y + rect.height / 2, Math.abs(rect.width / 2), Math.abs(rect.height / 2), 0, 0, 2 * Math.PI);
 		if (fill) ctx.fill();
 		if (stroke) ctx.stroke();
 	}

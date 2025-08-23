@@ -1,12 +1,10 @@
 import type React from 'react';
-import CanvasViewer from '../canvas/UICanvas';
-import UIInstructions from '../instructions/UIInstructions';
+import UICanvasDocumentViewer from '../canvasDocumentViewer/UICanvasDocumentViewer';
 
 const App: React.FC = () => {
 	return (
 		<>
-			<CanvasViewer />
-			<UIInstructions />
+			<UICanvasDocumentViewer />
 		</>
 	);
 };

@@ -1,6 +1,7 @@
 import CanvanContext from './models/canvasContext';
 import DemoSceneProvider from '../../sceneProviders/demo/DemoSceneProvider';
 import React, { useRef, useEffect } from 'react';
+import UIInstructions from './sections/instructions/UIInstructions';
 import useDrawCanvas from './hooks/UseDrawCanvas';
 import useEventHandlersKeyboard from './hooks/UseEventHandlersKeyboard';
 import useEventHandlersMouse from './hooks/UseEventHandlersMouse';
@@ -15,13 +16,13 @@ const regions: Record<string, { x: number; y: number; width: number; height: num
 	'4': { x: 200, y: 400, width: 250, height: 200 },
 };
 
-const CanvasViewer: React.FC = () => {
+const UICanvasDocumentViewer: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const context = new CanvanContext();
 	const sceneProvider = new DemoSceneProvider();
 	const { render } = useDrawCanvas(context, canvasRef, sceneProvider);
 	const { mouseEvents } = useEventHandlersMouse(context, canvasRef);
-	const { keyboardEvents } = useEventHandlersKeyboard(context, canvasRef, regions);
+	const { keyboardEvents } = useEventHandlersKeyboard(context, sceneProvider, canvasRef, regions);
 	const { touchEvents } = useHandleTouchEvents(context, canvasRef);
 
 	useHandleCanvasResize(canvasRef);
@@ -59,8 +60,9 @@ const CanvasViewer: React.FC = () => {
 	return (
 		<div className="canvas-container">
 			<canvas ref={canvasRef} />
+			<UIInstructions />
 		</div>
 	);
 };
 
-export default CanvasViewer;
+export default UICanvasDocumentViewer;

@@ -3,9 +3,9 @@ import DemoShape from './DemoShape';
 import Point from '../../models/geometry/Point';
 import Rectangle from '../../models/geometry/Rectangle';
 import Size from '../../models/geometry/Size';
-import type ISceneProvider from '../../components/canvas/interfaces/ISceneProvider';
+import type ICanvasDocumentViewerSceneProvider from '../../components/canvasDocumentViewer/interfaces/ICanvasDocumentViewerSceneProvider';
 
-export default class DemoSceneProvider implements ISceneProvider {
+export default class DemoSceneProvider implements ICanvasDocumentViewerSceneProvider {
 	private shapes: DemoShape[] = [];
 	private boundingRect?: Rectangle = undefined;
 
@@ -20,6 +20,7 @@ export default class DemoSceneProvider implements ISceneProvider {
 		return this.boundingRect!;
 	}
 	private lastRenderLog = 0; // timestamp of last log in ms
+
 	render(ctx: CanvasRenderingContext2D, region: Rectangle): void {
 		let total = this.shapes.length;
 		let rendered = 0;
@@ -34,29 +35,27 @@ export default class DemoSceneProvider implements ISceneProvider {
 			}
 		});
 
-		const now = performance.now();
-		if (now - this.lastRenderLog > 1000) {
-			// log at most once per second
-			console.log(`DemoSceneProvider: Total=${total}, Rendered=${rendered}, Off-screen=${offScreen}`);
-			this.lastRenderLog = now;
-		}
+		// const now = performance.now();
+		// if (now - this.lastRenderLog > 1000) {
+		// 	// log at most once per second
+		// 	console.log(`DemoSceneProvider: Total=${total}, Rendered=${rendered}, Off-screen=${offScreen}`);
+		// 	this.lastRenderLog = now;
+		// }
 	}
 
 	private createDemoShapes() {
-		const randomStep = (min: number, max: number, step: number) => {
-			const count = Math.floor((max - min) / step) + 1;
-			return min + step * Math.floor(Math.random() * count);
-		};
-
-		const width = randomStep(50, 2000, 50);
-		const height = randomStep(50, 2000, 50);
-		const numShapes = randomStep(10, 1000, 10);
+		const width = Math.floor(Math.random() * 2000) + 200;
+		const height = Math.floor(Math.random() * 2000) + 200;
+		const numShapes = Math.floor(Math.random() * 2000) + 10;
 
 		for (let i = 0; i < numShapes; i++) {
-			const w = 30 + Math.random() * 70;
-			const h = 30 + Math.random() * 70;
-			const x = Math.random() * (width - w);
-			const y = Math.random() * (height - h);
+			const w = Math.floor(30 + Math.random() * 150);
+			const h = Math.floor(30 + Math.random() * 150);
+
+			// pick a center uniformly in [-width/2, width/2] and [-height/2, height/2]
+			const x = Math.floor(Math.random() * (width - w)) - (width - w) / 2;
+			const y = Math.floor(Math.random() * (height - h)) - (height - h) / 2;
+
 			const rect = new Rectangle(new Point(x, y), new Size(w, h));
 
 			const type = Math.floor((Math.random() * Object.keys(EnumShapeType).length) / 2);

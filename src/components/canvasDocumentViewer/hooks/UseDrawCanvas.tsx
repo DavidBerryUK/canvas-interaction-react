@@ -1,11 +1,17 @@
 import Point from '../../../models/geometry/Point';
 import Rectangle from '../../../models/geometry/Rectangle';
 import Size from '../../../models/geometry/Size';
-import type ISceneProvider from '../interfaces/ISceneProvider';
+import type ICanvasDocumentViewerSceneProvider from '../interfaces/ICanvasDocumentViewerSceneProvider';
 import type CanvanContext from '../models/canvasContext';
 import useDrawGrid from './UseDrawGrid';
+import useDrawPrimitiveShapes from './UseDrawPrimitiveShapes';
 
-const useDrawCanvas = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>, sceneProvider: ISceneProvider | undefined) => {
+const useDrawCanvas = (
+	context: CanvanContext,
+	canvasRef: React.RefObject<HTMLCanvasElement | null>,
+	sceneProvider: ICanvasDocumentViewerSceneProvider | undefined
+) => {
+	const drawPrimitiveShapes = useDrawPrimitiveShapes();
 	let canvas: HTMLCanvasElement | null;
 	let ctx: CanvasRenderingContext2D | null;
 	const { drawGrid } = useDrawGrid();
@@ -24,14 +30,26 @@ const useDrawCanvas = (context: CanvanContext, canvasRef: React.RefObject<HTMLCa
 		clearScene();
 		ctx.save();
 		ctx.setTransform(context.scale, 0, 0, context.scale, context.offset.x, context.offset.y);
+		//
+		// draw the grid
+		//
 		drawGrid(context, canvas, ctx);
 
 		if (sceneProvider) {
+			//
+			// draw document broundry
+			//
+			drawPrimitiveShapes.shapes.roundedRect(ctx, { rect: sceneProvider.getBoundingRect(), lineWidth: 2, strokeColor: '#719FCC', radius: 8 });
+
 			// invert the transform to get scene coordinates
 			const visibleSceneArea = new Rectangle(
 				new Point(-context.offset.x / context.scale, -context.offset.y / context.scale),
 				new Size(canvas.width / context.scale, canvas.height / context.scale)
 			);
+
+			//
+			// draw scene using provider
+			//
 			sceneProvider.render(ctx, visibleSceneArea);
 		}
 		ctx.restore();

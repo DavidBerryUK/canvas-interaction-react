@@ -11,7 +11,11 @@ const UIInstructions: React.FC = () => {
 				<li>🖱️ Wheel: Zoom at cursor</li>
 				<li>⌨️ +/-: Zoom in/out</li>
 				<li>⌨️ 0: Zoom 100%</li>
-				<li>⌨️ f: Fit to screen</li>
+				<li>⌨️ f: Zoom to Fit</li>
+				<li>⌨️ x: Zoom to Fill </li>
+				<li>⌨️ w: Zoom to width </li>
+				<li>⌨️ h: Zoom to height </li>
+				<li>⌨️ c: Center document </li>
 				<li>⌨️ 1-4: Zoom to region</li>
 				<li>📱 Pinch: Zoom on mobile</li>
 				<li>📱 Drag: Pan on mobile</li>

@@ -4,7 +4,7 @@ import type CanvanContext from '../models/canvasContext';
 const BACKGROUND_COLOR = '#DCEEFF'; // pale, icy blue
 const MINOR_LINE_COLOR = '#A0C4E8'; // lighter blue for minor lines
 const MAJOR_LINE_COLOR = '#719FCC'; // stronger blue for major lines
-const CROSS_MARK_COLOR = '#567A99'; // darker, soft blue for cross marks
+const CROSS_MARK_COLOR = '#3F5C7A'; // '#567A99'; // darker, soft blue for cross marks
 const LABEL_COLOR = '#3F5C7A'; // dark blue for labels
 
 const useDrawGrid = () => {
