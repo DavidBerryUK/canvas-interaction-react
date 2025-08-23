@@ -5,19 +5,19 @@ import type CanvanContext from '../models/canvasContext';
 const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleMouseDownEvent = (e: MouseEvent) => {
 		context.isDragging = true;
-		context.last = Point.fromMouseEvent(e);
+		context.last = Point.createfromMouseEvent(e);
 	};
 
-	const handleMouseMouseEvent = (e: MouseEvent) => {
+	const handleMouseMouseEvent = (event: MouseEvent) => {
 		// Track last mouse position for keyboard zoom
 		const rect = Rectangle.createFromDomRect(canvasRef.current!.getBoundingClientRect());
-		const mousePoint = new Point(e.clientX, e.clientY);
+		const mousePoint = Point.createfromMouseEvent(event);
 		context.lastMouse = mousePoint.cloneWithSubtract(rect.origin);
 
 		if (context.isDragging) {
-			const delta = new Point(e.clientX - context.last.x, e.clientY - context.last.y);
+			const delta = new Point(event.clientX - context.last.x, event.clientY - context.last.y);
 			context.target = context.target.cloneWithAdd(delta);
-			context.last = new Point(e.clientX, e.clientY);
+			context.last = new Point(event.clientX, event.clientY);
 		}
 	};
 
@@ -25,11 +25,11 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 		context.isDragging = false;
 	};
 
-	const handleWheelEvent = (e: WheelEvent) => {
-		e.preventDefault();
+	const handleWheelEvent = (event: WheelEvent) => {
+		event.preventDefault();
 
 		const rect = Rectangle.createFromDomRect(canvasRef.current!.getBoundingClientRect());
-		const mousePoint = new Point(e.clientX, e.clientY);
+		const mousePoint = Point.createfromMouseEvent(event);
 		const cursor = mousePoint.cloneWithSubtract(rect.origin);
 
 		// Convert cursor to world coords before zoom
@@ -37,7 +37,7 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 
 		// Apply zoom
 		const zoomIntensity = 0.0015;
-		const zoom = 1 - e.deltaY * zoomIntensity;
+		const zoom = 1 - event.deltaY * zoomIntensity;
 		context.targetScale *= zoom;
 
 		// Adjust offset so cursor stays fixed
@@ -45,10 +45,12 @@ const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObjec
 	};
 
 	return {
-		handleMouseDownEvent,
-		handleMouseMouseEvent,
-		handleMouseUpEvent,
-		handleWheelEvent,
+		mouseEvents: {
+			handleMouseDownEvent,
+			handleMouseMouseEvent,
+			handleMouseUpEvent,
+			handleWheelEvent,
+		},
 	};
 };
 

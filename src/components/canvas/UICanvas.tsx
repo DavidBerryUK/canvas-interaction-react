@@ -19,43 +19,40 @@ const CanvasViewer: React.FC = () => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const context = new CanvanContext();
 	const sceneProvider = new DemoSceneProvider();
-	const { render } = useDrawCanvas(context, canvasRef, sceneProvider, regions);
-	const { handleMouseDownEvent, handleMouseMouseEvent, handleMouseUpEvent, handleWheelEvent } = useEventHandlersMouse(context, canvasRef);
-	const { handleKeyDownEvent } = useEventHandlersKeyboard(context, canvasRef, regions);
-	const { handleTouchStartEvent, handleTouchMoveEvent } = useHandleTouchEvents(context, canvasRef);
-	useHandleCanvasResize(canvasRef);
+	const { render } = useDrawCanvas(context, canvasRef, sceneProvider);
+	const { mouseEvents } = useEventHandlersMouse(context, canvasRef);
+	const { keyboardEvents } = useEventHandlersKeyboard(context, canvasRef, regions);
+	const { touchEvents } = useHandleTouchEvents(context, canvasRef);
 
-	const cleanUp = () => {
-		const canvas = canvasRef.current!;
-	};
+	useHandleCanvasResize(canvasRef);
 
 	useEffect(() => {
 		const canvas = canvasRef.current!;
 
 		// Mouse + touch handlers
-		canvas.addEventListener('mousedown', handleMouseDownEvent);
-		window.addEventListener('mousemove', handleMouseMouseEvent);
-		window.addEventListener('mouseup', handleMouseUpEvent);
-		window.addEventListener('wheel', handleWheelEvent, { passive: false });
+		canvas.addEventListener('mousedown', mouseEvents.handleMouseDownEvent);
+		window.addEventListener('mousemove', mouseEvents.handleMouseMouseEvent);
+		window.addEventListener('mouseup', mouseEvents.handleMouseUpEvent);
+		window.addEventListener('wheel', mouseEvents.handleWheelEvent, { passive: false });
 		// Pinch zoom
-		canvas.addEventListener('touchstart', handleTouchStartEvent, { passive: false });
-		canvas.addEventListener('touchmove', handleTouchMoveEvent, { passive: false });
+		canvas.addEventListener('touchstart', touchEvents.handleTouchStartEvent, { passive: false });
+		canvas.addEventListener('touchmove', touchEvents.handleTouchMoveEvent, { passive: false });
 		// Keyboard shortcuts
-		window.addEventListener('keydown', handleKeyDownEvent);
+		window.addEventListener('keydown', keyboardEvents.handleKeyDownEvent);
 
 		// render canvas
 		render();
 
 		// Cleanup function to remove listeners
 		return () => {
-			canvas.removeEventListener('mousedown', handleMouseDownEvent);
-			window.removeEventListener('mousemove', handleMouseMouseEvent);
-			window.removeEventListener('mouseup', handleMouseUpEvent);
-			window.removeEventListener('wheel', handleWheelEvent);
-			canvas.removeEventListener('touchmove', handleTouchMoveEvent);
-			canvas.removeEventListener('touchstart', handleTouchStartEvent);
+			canvas.removeEventListener('mousedown', mouseEvents.handleMouseDownEvent);
+			window.removeEventListener('mousemove', mouseEvents.handleMouseMouseEvent);
+			window.removeEventListener('mouseup', mouseEvents.handleMouseUpEvent);
+			window.removeEventListener('wheel', mouseEvents.handleWheelEvent);
+			canvas.removeEventListener('touchmove', touchEvents.handleTouchMoveEvent);
+			canvas.removeEventListener('touchstart', touchEvents.handleTouchStartEvent);
 
-			window.removeEventListener('keydown', handleKeyDownEvent);
+			window.removeEventListener('keydown', keyboardEvents.handleKeyDownEvent);
 		};
 	}, []);
 

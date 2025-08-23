@@ -39,8 +39,10 @@ const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject
 	};
 
 	return {
-		handleTouchMoveEvent,
-		handleTouchStartEvent,
+		touchEvents: {
+			handleTouchMoveEvent,
+			handleTouchStartEvent,
+		},
 	};
 };
 

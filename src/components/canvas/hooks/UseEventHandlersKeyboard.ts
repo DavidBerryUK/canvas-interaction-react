@@ -26,7 +26,9 @@ const useEventHandlersKeyboard = (
 	// Zoom-to-region
 	const zoomToRegion = (regionKey: string) => {
 		const r = regions[regionKey];
-		if (!r) return;
+		if (!r) {
+			return;
+		}
 		const scale = new Point(canvasRef.current!.width / r.width, canvasRef.current!.height / r.height);
 		context.targetScale = Math.min(scale.x, scale.y) * 0.85;
 		context.target = new Point(
@@ -74,7 +76,9 @@ const useEventHandlersKeyboard = (
 	};
 
 	return {
-		handleKeyDownEvent,
+		keyboardEvents: {
+			handleKeyDownEvent,
+		},
 	};
 };
 

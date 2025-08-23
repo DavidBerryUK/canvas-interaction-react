@@ -10,8 +10,12 @@ export default class Point {
 		return new Point(Infinity, Infinity);
 	}
 
-	static get fromMouseEvent(): (e: MouseEvent) => Point {
+	static get createfromMouseEvent(): (e: MouseEvent | WheelEvent) => Point {
 		return (e: MouseEvent) => new Point(e.clientX, e.clientY);
+	}
+
+	static get createfromTouchEvent(): (e: Touch) => Point {
+		return (e: Touch) => new Point(e.clientX, e.clientY);
 	}
 
 	constructor(x: number, y: number) {

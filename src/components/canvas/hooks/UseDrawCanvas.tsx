@@ -5,22 +5,10 @@ import type ISceneProvider from '../interfaces/ISceneProvider';
 import type CanvanContext from '../models/canvasContext';
 import useDrawGrid from './UseDrawGrid';
 
-const useDrawCanvas = (
-	context: CanvanContext,
-	canvasRef: React.RefObject<HTMLCanvasElement | null>,
-	sceneProvider: ISceneProvider | undefined,
-	regions: Record<string, { x: number; y: number; width: number; height: number }>
-) => {
+const useDrawCanvas = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>, sceneProvider: ISceneProvider | undefined) => {
 	let canvas: HTMLCanvasElement | null;
 	let ctx: CanvasRenderingContext2D | null;
 	const { drawGrid } = useDrawGrid();
-
-	const updateBounds = (x: number, y: number, w: number, h: number) => {
-		context.minX = Math.min(context.minX, x);
-		context.minY = Math.min(context.minY, y);
-		context.maxX = Math.max(context.maxX, x + w);
-		context.maxY = Math.max(context.maxY, y + h);
-	};
 
 	const clearScene = () => {
 		if (!canvas || !ctx) return;
@@ -39,21 +27,13 @@ const useDrawCanvas = (
 		drawGrid(context, canvas, ctx);
 
 		if (sceneProvider) {
-			// calculate the region of the scene that will be visible in the canvas viewport
-			// calculate the region of the scene that will be visible in the canvas viewport
-			const canvasWidth = canvas.width;
-			const canvasHeight = canvas.height;
-
 			// invert the transform to get scene coordinates
 			const visibleSceneArea = new Rectangle(
 				new Point(-context.offset.x / context.scale, -context.offset.y / context.scale),
-				new Size(canvasWidth / context.scale, canvasHeight / context.scale)
+				new Size(canvas.width / context.scale, canvas.height / context.scale)
 			);
 			sceneProvider.render(ctx, visibleSceneArea);
-		} else {
-			drawScene();
 		}
-
 		ctx.restore();
 
 		// Smooth transition
@@ -62,39 +42,6 @@ const useDrawCanvas = (
 		context.offset.y += (context.target.y - context.offset.y) * 0.15;
 
 		requestAnimationFrame(render);
-	};
-
-	const drawScene = () => {
-		if (!ctx) return;
-
-		ctx.fillStyle = 'red';
-		ctx.fillRect(50, 50, 200, 200);
-		updateBounds(50, 50, 200, 200);
-
-		ctx.fillStyle = 'blue';
-		ctx.beginPath();
-		ctx.arc(400, 300, 100, 0, 2 * Math.PI);
-		ctx.fill();
-		updateBounds(300, 200, 200, 200);
-
-		ctx.fillStyle = 'green';
-		ctx.fillRect(600, 100, 150, 150);
-		updateBounds(600, 100, 150, 150);
-
-		// Optional: region outlines
-		for (const key in regions) {
-			const r = regions[key];
-			ctx.strokeStyle = 'rgba(0,0,0,0.4)';
-			ctx.lineWidth = 2;
-			ctx.setLineDash([6, 4]);
-			ctx.strokeRect(r.x, r.y, r.width, r.height);
-			ctx.setLineDash([]);
-			ctx.fillStyle = 'black';
-			ctx.font = '16px Arial';
-			ctx.fillText(key, r.x + 4, r.y + 16);
-		}
-
-		ctx.restore();
 	};
 
 	return { render };
