@@ -1,8 +1,8 @@
-import Point from '../../../models/geometry/Point';
-import Rectangle from '../../../models/geometry/Rectangle';
-import Size from '../../../models/geometry/Size';
+import Point from '../../../library/geometry/Point';
+import Rectangle from '../../../library/geometry/Rectangle';
+import Size from '../../../library/geometry/Size';
+import type CanvanContext from '../models/CanvasContext';
 import type ICanvasDocumentViewerSceneProvider from '../interfaces/ICanvasDocumentViewerSceneProvider';
-import type CanvanContext from '../models/canvasContext';
 import useDrawGrid from './UseDrawGrid';
 import useDrawPrimitiveShapes from './UseDrawPrimitiveShapes';
 
@@ -12,8 +12,10 @@ const useDrawCanvas = (
 	sceneProvider: ICanvasDocumentViewerSceneProvider | undefined
 ) => {
 	const drawPrimitiveShapes = useDrawPrimitiveShapes();
+
 	let canvas: HTMLCanvasElement | null;
 	let ctx: CanvasRenderingContext2D | null;
+
 	const { drawGrid } = useDrawGrid();
 
 	const clearScene = () => {
@@ -51,6 +53,17 @@ const useDrawCanvas = (
 			// draw scene using provider
 			//
 			sceneProvider.render(ctx, visibleSceneArea);
+
+			//
+			// draw regions
+			//
+			var regions = sceneProvider.getRegions();
+
+			regions.forEach((region) => {
+				if (region.rectangle.intersects(visibleSceneArea)) {
+					drawPrimitiveShapes.shapes.roundedRect(ctx!, { rect: region.rectangle, lineWidth: 2, strokeColor: '#9FCC71', radius: 4 });
+				}
+			});
 		}
 		ctx.restore();
 

@@ -16,7 +16,7 @@ const UIInstructions: React.FC = () => {
 				<li>⌨️ w: Zoom to width </li>
 				<li>⌨️ h: Zoom to height </li>
 				<li>⌨️ c: Center document </li>
-				<li>⌨️ 1-4: Zoom to region</li>
+				<li>⌨️ 1-9: Zoom to region</li>
 				<li>📱 Pinch: Zoom on mobile</li>
 				<li>📱 Drag: Pan on mobile</li>
 			</ul>

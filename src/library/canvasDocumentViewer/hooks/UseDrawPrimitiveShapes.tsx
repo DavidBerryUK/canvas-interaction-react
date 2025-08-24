@@ -1,4 +1,4 @@
-import type Rectangle from '../../../models/geometry/Rectangle';
+import Rectangle from '../../../library/geometry/Rectangle';
 
 interface ShapeOptions {
 	rect: Rectangle;

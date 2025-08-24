@@ -1,6 +1,6 @@
-import CanvanContext from './models/canvasContext';
-import DemoSceneProvider from '../../sceneProviders/demo/DemoSceneProvider';
+import CanvanContext from './models/CanvasContext';
 import React, { useRef, useEffect } from 'react';
+import type ICanvasDocumentViewerSceneProvider from './interfaces/ICanvasDocumentViewerSceneProvider';
 import UIInstructions from './sections/instructions/UIInstructions';
 import useDrawCanvas from './hooks/UseDrawCanvas';
 import useEventHandlersKeyboard from './hooks/UseEventHandlersKeyboard';
@@ -8,21 +8,16 @@ import useEventHandlersMouse from './hooks/UseEventHandlersMouse';
 import useHandleCanvasResize from './hooks/UseHandleCanvasResize';
 import useHandleTouchEvents from './hooks/UseHandleTouchEvents';
 
-// Predefined zoom regions
-const regions: Record<string, { x: number; y: number; width: number; height: number }> = {
-	'1': { x: 40, y: 40, width: 240, height: 240 },
-	'2': { x: 300, y: 200, width: 200, height: 200 },
-	'3': { x: 580, y: 80, width: 200, height: 200 },
-	'4': { x: 200, y: 400, width: 250, height: 200 },
-};
+interface IProperties {
+	sceneProvider: ICanvasDocumentViewerSceneProvider;
+}
 
-const UICanvasDocumentViewer: React.FC = () => {
+const UICanvasDocumentViewer: React.FC<IProperties> = (props) => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const context = new CanvanContext();
-	const sceneProvider = new DemoSceneProvider();
-	const { render } = useDrawCanvas(context, canvasRef, sceneProvider);
+	const { render } = useDrawCanvas(context, canvasRef, props.sceneProvider);
 	const { mouseEvents } = useEventHandlersMouse(context, canvasRef);
-	const { keyboardEvents } = useEventHandlersKeyboard(context, sceneProvider, canvasRef, regions);
+	const { keyboardEvents } = useEventHandlersKeyboard(context, props.sceneProvider, canvasRef);
 	const { touchEvents } = useHandleTouchEvents(context, canvasRef);
 
 	useHandleCanvasResize(canvasRef);

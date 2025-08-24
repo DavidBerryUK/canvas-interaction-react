@@ -1,4 +1,5 @@
-import type Rectangle from '../../../models/geometry/Rectangle';
+import type Rectangle from '../../../library/geometry/Rectangle';
+import CanvasRegion from '../models/CanvasRegion';
 
 /**
  * Provides a scene definition for the `UICanvasDocumentViewer` component.
@@ -30,4 +31,16 @@ export default interface ICanvasDocumentViewerSceneProvider {
 	 *                 Elements outside this area should not be drawn.
 	 */
 	render(ctx: CanvasRenderingContext2D, region: Rectangle): void;
+
+	/**
+	 * Returns a collection of predefined regions within the document.
+	 *
+	 * These regions represent specific areas of interest (e.g., sections,
+	 * annotations, or highlights) that the user can navigate to or interact with
+	 * in the `UICanvasDocumentViewer`.
+	 *
+	 * @returns An array of {@link CanvasRegion} objects describing
+	 *          the navigable regions of the document.
+	 */
+	getRegions(): Array<CanvasRegion>;
 }

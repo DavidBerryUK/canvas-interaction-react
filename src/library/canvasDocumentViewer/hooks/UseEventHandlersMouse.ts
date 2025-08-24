@@ -1,6 +1,6 @@
-import Point from '../../../models/geometry/Point';
-import Rectangle from '../../../models/geometry/Rectangle';
-import type CanvanContext from '../models/canvasContext';
+import Point from '../../../library/geometry/Point';
+import Rectangle from '../../../library/geometry/Rectangle';
+import type CanvanContext from '../models/CanvasContext';
 
 const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleMouseDownEvent = (e: MouseEvent) => {

@@ -1,12 +1,13 @@
 import { EnumShapeDrawStyle, EnumShapeType } from './DemoEnums';
-import DemoShape from './DemoShape';
-import Point from '../../models/geometry/Point';
-import Rectangle from '../../models/geometry/Rectangle';
-import Size from '../../models/geometry/Size';
-import type ICanvasDocumentViewerSceneProvider from '../../components/canvasDocumentViewer/interfaces/ICanvasDocumentViewerSceneProvider';
+import EnumDemoShape from './DemoShape';
+import Point from '../../../../library/geometry/Point';
+import Rectangle from '../../../../library/geometry/Rectangle';
+import Size from '../../../../library/geometry/Size';
+import type ICanvasDocumentViewerSceneProvider from '../../../../library/canvasDocumentViewer/interfaces/ICanvasDocumentViewerSceneProvider';
+import CanvasRegion from '../../../../library/canvasDocumentViewer/models/CanvasRegion';
 
 export default class DemoSceneProvider implements ICanvasDocumentViewerSceneProvider {
-	private shapes: DemoShape[] = [];
+	private shapes: EnumDemoShape[] = [];
 	private boundingRect?: Rectangle = undefined;
 
 	constructor() {
@@ -19,19 +20,46 @@ export default class DemoSceneProvider implements ICanvasDocumentViewerSceneProv
 		}
 		return this.boundingRect!;
 	}
-	private lastRenderLog = 0; // timestamp of last log in ms
+
+	getRegions(): Array<CanvasRegion> {
+		var regions = new Array<CanvasRegion>();
+		var boundingRect = this.getBoundingRect();
+
+		var columnWidth = boundingRect.width / 3;
+		var rowHeight = boundingRect.height / 3;
+		var regionWidth = Math.max(columnWidth - 20, 10);
+		var regionHeight = Math.max(rowHeight - 20, 10);
+		var regionNo = 0;
+
+		for (var x = 0; x < 3; x++) {
+			for (var y = 0; y < 3; y++) {
+				regionNo++;
+				var id = `${regionNo}`;
+				var name = `region ${regionNo} of 9`;
+				var rect = new Rectangle(
+					new Point(boundingRect.x + x * columnWidth + 10, boundingRect.y + y * rowHeight + 10),
+					new Size(regionWidth, regionHeight)
+				);
+				regions.push(new CanvasRegion(id, name, rect));
+			}
+		}
+
+		return regions;
+	}
+
+	//private lastRenderLog = 0; // timestamp of last log in ms
 
 	render(ctx: CanvasRenderingContext2D, region: Rectangle): void {
-		let total = this.shapes.length;
-		let rendered = 0;
-		let offScreen = 0;
+		//let total = this.shapes.length;
+		//let rendered = 0;
+		//let offScreen = 0;
 
 		this.shapes.forEach((shape) => {
 			if (region.intersects(shape.rectangle)) {
 				shape.draw(ctx);
-				rendered++;
+				//rendered++;
 			} else {
-				offScreen++;
+				//offScreen++;
 			}
 		});
 
@@ -64,7 +92,7 @@ export default class DemoSceneProvider implements ICanvasDocumentViewerSceneProv
 			const strokeColor =
 				style === EnumShapeDrawStyle.Stroke || style === EnumShapeDrawStyle.FillAndStroke ? Math.floor(Math.random() * 5) : undefined;
 
-			this.shapes.push(new DemoShape(rect, type, fillColor, style, strokeColor));
+			this.shapes.push(new EnumDemoShape(rect, type, fillColor, style, strokeColor));
 		}
 	}
 

@@ -1,5 +1,5 @@
-import Point from '../../../models/geometry/Point';
-import type CanvanContext from '../models/canvasContext';
+import Point from '../../../library/geometry/Point';
+import type CanvanContext from '../models/CanvasContext';
 
 const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleTouchStartEvent = (e: TouchEvent) => {

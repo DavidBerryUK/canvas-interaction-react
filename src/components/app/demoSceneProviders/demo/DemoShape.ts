@@ -1,7 +1,7 @@
-import type Rectangle from '../../models/geometry/Rectangle';
+import type Rectangle from '../../../../library/geometry/Rectangle';
 import { EnumShapeColor, EnumShapeDrawStyle, EnumShapeType } from './DemoEnums';
 
-export default class DemoShape {
+export default class EnumDemoShape {
 	rectangle: Rectangle;
 	type: EnumShapeType;
 	fillColor: EnumShapeColor;

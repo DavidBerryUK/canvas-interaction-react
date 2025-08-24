@@ -1,13 +1,12 @@
-import Point from '../../../models/geometry/Point';
-import Size from '../../../models/geometry/Size';
+import Point from '../../../library/geometry/Point';
+import Size from '../../../library/geometry/Size';
 import type ICanvasDocumentViewerSceneProvider from '../interfaces/ICanvasDocumentViewerSceneProvider';
-import type CanvanContext from '../models/canvasContext';
+import type CanvanContext from '../models/CanvasContext';
 
 const useEventHandlersKeyboard = (
 	context: CanvanContext,
 	provider: ICanvasDocumentViewerSceneProvider,
-	canvasRef: React.RefObject<HTMLCanvasElement | null>,
-	regions: Record<string, { x: number; y: number; width: number; height: number }>
+	canvasRef: React.RefObject<HTMLCanvasElement | null>
 ) => {
 	// Reset view
 	const resetView = () => {
@@ -17,15 +16,15 @@ const useEventHandlersKeyboard = (
 
 	// Zoom-to-region
 	const zoomToRegion = (regionKey: string) => {
-		const r = regions[regionKey];
-		if (!r) {
+		const region = provider.getRegions().find((region) => region.id === regionKey);
+		if (!region) {
 			return;
 		}
-		const scale = new Point(canvasRef.current!.width / r.width, canvasRef.current!.height / r.height);
+		const scale = new Point(canvasRef.current!.width / region.rectangle.width, canvasRef.current!.height / region.rectangle.height);
 		context.targetScale = Math.min(scale.x, scale.y) * 0.85;
 		context.target = new Point(
-			(canvasRef.current!.width - r.width * context.targetScale) / 2 - r.x * context.targetScale,
-			(canvasRef.current!.height - r.height * context.targetScale) / 2 - r.y * context.targetScale
+			(canvasRef.current!.width - region.rectangle.width * context.targetScale) / 2 - region.rectangle.x * context.targetScale,
+			(canvasRef.current!.height - region.rectangle.height * context.targetScale) / 2 - region.rectangle.y * context.targetScale
 		);
 	};
 
@@ -116,9 +115,10 @@ const useEventHandlersKeyboard = (
 			return;
 		}
 
-		if (regions[e.key]) {
+		// if keyboard event is value 1 to 9
+		if (e.key >= '1' && e.key <= '9') {
 			e.preventDefault();
-			zoomToRegion(e.key);
+			zoomToRegion(e.key); // pass as number
 		}
 	};
 
@@ -126,6 +126,8 @@ const useEventHandlersKeyboard = (
 		keyboardEvents: {
 			handleKeyDownEvent,
 		},
+		zoomToRegion,
+		zoomToFit,
 	};
 };
 

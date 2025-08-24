@@ -1,4 +1,4 @@
-import type CanvanContext from '../models/canvasContext';
+import type CanvanContext from '../models/CanvasContext';
 // Graph-paper theme colors
 
 const BACKGROUND_COLOR = '#DCEEFF'; // pale, icy blue
