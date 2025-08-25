@@ -9,7 +9,7 @@ const useCanvasNavigation = (
 	context: CanvasContext,
 	provider: ICanvasDocumentViewerSceneProvider
 ) => {
-	const zoomAt = (cursor: Point, zoomFactor: number, animate?: boolean = true) => {
+	const zoomAt = (cursor: Point, zoomFactor: number) => {
 		// Convert cursor to world coords before zoom
 		const world = new Point((cursor.x - context.target.x) / context.targetScale, (cursor.y - context.target.y) / context.targetScale);
 		// Apply zoom
@@ -22,14 +22,14 @@ const useCanvasNavigation = (
 		const contentRect = provider.getBoundingRect();
 		const canvasSize = new Size(canvasRef.current!.width, canvasRef.current!.height);
 
-		// Total drawn size at current zoom
 		const scaledSize = new Size(contentRect.width * context.targetScale, contentRect.height * context.targetScale);
 
-		// Center offsets
-		context.target = new Point(
+		const point = new Point(
 			(canvasSize.width - scaledSize.width) / 2 - contentRect.x * context.targetScale,
 			(canvasSize.height - scaledSize.height) / 2 - contentRect.y * context.targetScale
 		);
+
+		context.setPoint(withAnimation, point);
 	};
 
 	// select placement and zoom level to fit all the elements on screen
@@ -47,14 +47,14 @@ const useCanvasNavigation = (
 		centerDocument(withAnimation);
 	};
 
-	const zoomToWidth = (animate?: boolean = true) => {
+	const zoomToWidth = () => {
 		const contentWidth = provider.getBoundingRect().width;
 		const canvasWidth = canvasRef.current!.width;
 		context.targetScale = canvasWidth / contentWidth;
 		centerDocument();
 	};
 
-	const zoomToHeight = (animate?: boolean = true) => {
+	const zoomToHeight = () => {
 		const contentHeight = provider.getBoundingRect().height;
 		const canvasHeight = canvasRef.current!.height;
 		context.targetScale = canvasHeight / contentHeight;
@@ -62,7 +62,7 @@ const useCanvasNavigation = (
 	};
 
 	// select placement and zoom level to fill the screen, even if some are off screen
-	const zoomToFill = (animate?: boolean = true) => {
+	const zoomToFill = () => {
 		const contentSize = provider.getBoundingRect();
 		const canvasSize = new Size(canvasRef.current!.width, canvasRef.current!.height);
 		const scalePoint = new Point(canvasSize.width / contentSize.width, canvasSize.height / contentSize.height);
@@ -70,7 +70,7 @@ const useCanvasNavigation = (
 		centerDocument();
 	};
 
-	const zoomToRectangle = (rectangle: Rectangle, animate?: boolean = true) => {
+	const zoomToRectangle = (rectangle: Rectangle) => {
 		const scale = new Point(canvasRef.current!.width / rectangle.width, canvasRef.current!.height / rectangle.height);
 		context.targetScale = Math.min(scale.x, scale.y) * 0.85;
 		context.target = new Point(
@@ -79,7 +79,7 @@ const useCanvasNavigation = (
 		);
 	};
 
-	const resetView = (animate?: boolean = true) => {
+	const resetView = () => {
 		const rectangle = provider.getBoundingRect();
 		context.targetScale = 1;
 		context.target = new Point(
