@@ -67,7 +67,7 @@ const UICanvasDocumentViewer: React.FC<IProperties> = (props) => {
 	return (
 		<div className="canvas-container">
 			<canvas ref={canvasRef} />
-			<UIInstructions />
+			<UIInstructions state={canvasState} />
 		</div>
 	);
 };

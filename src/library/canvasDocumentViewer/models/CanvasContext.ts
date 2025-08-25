@@ -1,9 +1,12 @@
 import Point from '../../geometry/Point';
 
 export default class CanvasContext {
+	// are transistions (move/zoom) animated
+	animated: boolean = true;
+
 	// canvas zoom
-	scale = 1;
-	targetScale = 1; // animation target zoom level
+	scale: number = 1;
+	targetScale: number = 1; // animation target zoom level
 
 	// canvas offset
 	offset: Point = Point.zero;
@@ -21,8 +24,6 @@ export default class CanvasContext {
 	maxX = -Infinity;
 	maxY = -Infinity;
 
-	getScale = (withAnimation: boolean): number => (withAnimation ? this.scale : this.targetScale);
-
 	getPoint = (withAnimation: boolean) => {
 		if (withAnimation) {
 			return this.target;
@@ -32,14 +33,14 @@ export default class CanvasContext {
 
 	setPoint = (withAnimation: boolean, value: Point) => {
 		this.target = value;
-		if (!withAnimation) {
+		if (withAnimation === false) {
 			this.offset = value;
 		}
 	};
 
 	setScale = (withAnimation: boolean, value: number) => {
 		this.targetScale = value;
-		if (!withAnimation) {
+		if (withAnimation === false) {
 			this.scale = value;
 		}
 	};

@@ -6,11 +6,7 @@ import type ICanvasDocumentViewerSceneProvider from '../interfaces/ICanvasDocume
 import useDrawGrid from './UseDrawGrid';
 import useDrawPrimitiveShapes from './UseDrawPrimitiveShapes';
 
-const useDrawCanvas = (
-	context: CanvasContext,
-	canvasRef: React.RefObject<HTMLCanvasElement | null>,
-	sceneProvider: ICanvasDocumentViewerSceneProvider | undefined
-) => {
+const useDrawCanvas = (context: CanvasContext, canvasRef: React.RefObject<HTMLCanvasElement | null>, sceneProvider: ICanvasDocumentViewerSceneProvider | undefined) => {
 	const drawPrimitiveShapes = useDrawPrimitiveShapes();
 
 	let canvas: HTMLCanvasElement | null;
@@ -44,10 +40,7 @@ const useDrawCanvas = (
 			drawPrimitiveShapes.shapes.roundedRect(ctx, { rect: sceneProvider.getBoundingRect(), lineWidth: 2, strokeColor: '#719FCC', radius: 8 });
 
 			// invert the transform to get scene coordinates
-			const visibleSceneArea = new Rectangle(
-				new Point(-context.offset.x / context.scale, -context.offset.y / context.scale),
-				new Size(canvas.width / context.scale, canvas.height / context.scale)
-			);
+			const visibleSceneArea = new Rectangle(new Point(-context.offset.x / context.scale, -context.offset.y / context.scale), new Size(canvas.width / context.scale, canvas.height / context.scale));
 
 			//
 			// draw scene using provider

@@ -2,11 +2,7 @@ import type ICanvasDocumentViewerSceneProvider from '../interfaces/ICanvasDocume
 import type CanvasContext from '../models/CanvasContext';
 import useCanvasNavigation from './UseCanvasNavigation';
 
-const useEventHandlersKeyboard = (
-	context: CanvasContext,
-	provider: ICanvasDocumentViewerSceneProvider,
-	canvasRef: React.RefObject<HTMLCanvasElement | null>
-) => {
+const useEventHandlersKeyboard = (context: CanvasContext, provider: ICanvasDocumentViewerSceneProvider, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const { navigate } = useCanvasNavigation(canvasRef, context, provider);
 
 	// Reset view
@@ -17,46 +13,42 @@ const useEventHandlersKeyboard = (
 		if (!region) {
 			return;
 		}
-		navigate.zoomToRectangle(region.rectangle);
+		navigate.zoomToRectangle(region.rectangle, context.animated);
 	};
 
 	// --- Keyboard zoom helpers ---
 
-	const handleKeyboardZoomIn = () => {
-		navigate.zoomAt(context.lastMouse, 1.2);
+	const handleKeyboardZoomIn = (withAnimation: boolean = true) => {
+		navigate.zoomAt(context.lastMouse, 1.2, withAnimation);
 	};
 
-	const handleKeyboardZoomOut = () => {
-		navigate.zoomAt(context.lastMouse, 1 / 1.2);
+	const handleKeyboardZoomOut = (withAnimation: boolean = true) => {
+		navigate.zoomAt(context.lastMouse, 1 / 1.2, withAnimation);
 	};
 
 	const handleKeyDownEvent = (e: KeyboardEvent) => {
+		const key = e.key.toLowerCase(); // convert all keys to lowercase
+
 		const actions: Record<string, () => void> = {
-			'+': handleKeyboardZoomIn,
-			'-': handleKeyboardZoomOut,
-			'0': navigate.resetView,
-			F: navigate.zoomToFit,
-			f: navigate.zoomToFit,
-			X: navigate.zoomToFill,
-			x: navigate.zoomToFill,
-			w: navigate.zoomToWidth,
-			W: navigate.zoomToWidth,
-			h: navigate.zoomToHeight,
-			H: navigate.zoomToHeight,
-			c: navigate.centerDocument,
-			C: navigate.centerDocument,
+			'+': () => handleKeyboardZoomIn(context.animated),
+			'-': () => handleKeyboardZoomOut(context.animated),
+			'0': () => navigate.resetView(context.animated),
+			f: () => navigate.zoomToFit(context.animated),
+			x: () => navigate.zoomToFill(context.animated),
+			w: () => navigate.zoomToWidth(context.animated),
+			h: () => navigate.zoomToHeight(context.animated),
+			c: () => navigate.centerDocument(context.animated),
 		};
 
-		if (actions[e.key]) {
+		if (actions[key]) {
 			e.preventDefault();
-			actions[e.key]();
+			actions[key]();
 			return;
 		}
 
-		// if keyboard event is value 1 to 9
-		if (e.key >= '1' && e.key <= '9') {
+		if (key >= '1' && key <= '9') {
 			e.preventDefault();
-			zoomToRegion(e.key); // pass as number
+			zoomToRegion(key);
 		}
 	};
 
