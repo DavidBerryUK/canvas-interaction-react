@@ -1,12 +1,12 @@
 import useDrawGrid from '../../../library/canvasDocumentViewer/hooks/UseDrawGrid';
 import type ICanvasDocumentViewerSceneProvider from '../../../library/canvasDocumentViewer/interfaces/ICanvasDocumentViewerSceneProvider';
-import type CanvanContext from '../../../library/canvasDocumentViewer/models/CanvasContext';
+import type CanvasContext from '../../../library/canvasDocumentViewer/models/CanvasContext';
 import Point from '../../../library/geometry/Point';
 import Rectangle from '../../../library/geometry/Rectangle';
 import Size from '../../../library/geometry/Size';
 
 const useDrawCanvas = (
-	context: CanvanContext,
+	context: CanvasContext,
 	canvasRef: React.RefObject<HTMLCanvasElement | null>,
 	sceneProvider: ICanvasDocumentViewerSceneProvider | undefined
 ) => {

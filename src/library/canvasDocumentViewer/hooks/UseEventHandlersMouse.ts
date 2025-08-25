@@ -1,8 +1,8 @@
 import Point from '../../../library/geometry/Point';
 import Rectangle from '../../../library/geometry/Rectangle';
-import type CanvanContext from '../models/CanvasContext';
+import type CanvasContext from '../models/CanvasContext';
 
-const useEventHandlersMouse = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
+const useEventHandlersMouse = (context: CanvasContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleMouseDownEvent = (e: MouseEvent) => {
 		context.isDragging = true;
 		context.last = Point.createfromMouseEvent(e);

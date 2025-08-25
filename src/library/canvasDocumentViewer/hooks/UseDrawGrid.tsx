@@ -1,4 +1,4 @@
-import type CanvanContext from '../models/CanvasContext';
+import type CanvasContext from '../models/CanvasContext';
 // Graph-paper theme colors
 
 const BACKGROUND_COLOR = '#DCEEFF'; // pale, icy blue
@@ -10,7 +10,7 @@ const LABEL_COLOR = '#3F5C7A'; // dark blue for labels
 const useDrawGrid = () => {
 	const alphaCache = new Map<string, number>();
 
-	const drawGrid = (context: CanvanContext, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+	const drawGrid = (context: CanvasContext, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
 		// Fill background
 		// Fill background
 		ctx.save();

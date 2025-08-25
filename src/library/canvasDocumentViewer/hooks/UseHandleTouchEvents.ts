@@ -1,7 +1,7 @@
 import Point from '../../../library/geometry/Point';
-import type CanvanContext from '../models/CanvasContext';
+import type CanvasContext from '../models/CanvasContext';
 
-const useHandleTouchEvents = (context: CanvanContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
+const useHandleTouchEvents = (context: CanvasContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleTouchStartEvent = (e: TouchEvent) => {
 		if (e.touches.length === 2) {
 			const dx = e.touches[0].clientX - e.touches[1].clientX;

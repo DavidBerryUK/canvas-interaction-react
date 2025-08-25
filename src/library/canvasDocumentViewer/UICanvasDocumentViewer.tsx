@@ -1,4 +1,3 @@
-import CanvanContext from './models/CanvasContext';
 import React, { useRef, useEffect } from 'react';
 import type ICanvasDocumentViewerSceneProvider from './interfaces/ICanvasDocumentViewerSceneProvider';
 import UIInstructions from './sections/instructions/UIInstructions';
@@ -7,6 +6,9 @@ import useEventHandlersKeyboard from './hooks/UseEventHandlersKeyboard';
 import useEventHandlersMouse from './hooks/UseEventHandlersMouse';
 import useHandleCanvasResize from './hooks/UseHandleCanvasResize';
 import useHandleTouchEvents from './hooks/UseHandleTouchEvents';
+import useCanvasDocumentState from './hooks/UseCanvasDocumentState';
+import useCanvasNavigation from './hooks/UseCanvasNavigation';
+import type Size from '../geometry/Size';
 
 interface IProperties {
 	sceneProvider: ICanvasDocumentViewerSceneProvider;
@@ -14,13 +16,23 @@ interface IProperties {
 
 const UICanvasDocumentViewer: React.FC<IProperties> = (props) => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
-	const context = new CanvanContext();
-	const { render } = useDrawCanvas(context, canvasRef, props.sceneProvider);
-	const { mouseEvents } = useEventHandlersMouse(context, canvasRef);
-	const { keyboardEvents } = useEventHandlersKeyboard(context, props.sceneProvider, canvasRef);
-	const { touchEvents } = useHandleTouchEvents(context, canvasRef);
+	const { canvasState } = useCanvasDocumentState();
+	const { render } = useDrawCanvas(canvasState, canvasRef, props.sceneProvider);
+	const { mouseEvents } = useEventHandlersMouse(canvasState, canvasRef);
+	const { keyboardEvents } = useEventHandlersKeyboard(canvasState, props.sceneProvider, canvasRef);
+	const { touchEvents } = useHandleTouchEvents(canvasState, canvasRef);
+	const { navigate } = useCanvasNavigation(canvasRef, canvasState, props.sceneProvider);
+	let firstResize = true;
 
-	useHandleCanvasResize(canvasRef);
+	const handleCanvasResized = (_: Size) => {
+		if (!firstResize) {
+			return;
+		}
+		firstResize = true;
+		navigate.zoomToFit(false);
+	};
+
+	useHandleCanvasResize(canvasRef, handleCanvasResized);
 
 	useEffect(() => {
 		const canvas = canvasRef.current!;

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
+import Size from '../../geometry/Size';
 
-const useHandleCanvasResize = (canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
+const useHandleCanvasResize = (canvasRef: React.RefObject<HTMLCanvasElement | null>, canvasResized: (size: Size) => void) => {
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
@@ -10,6 +11,7 @@ const useHandleCanvasResize = (canvasRef: React.RefObject<HTMLCanvasElement | nu
 				const { width, height } = entry.contentRect;
 				canvas.width = width;
 				canvas.height = height;
+				canvasResized(new Size(width, height));
 			}
 		});
 
