@@ -4,11 +4,7 @@ import UICanvasDocumentViewer from '../../library/canvasDocumentViewer/UICanvasD
 
 const App: React.FC = () => {
 	const sceneProvider = new DemoSceneProvider();
-	return (
-		<>
-			<UICanvasDocumentViewer sceneProvider={sceneProvider} />
-		</>
-	);
+	return <UICanvasDocumentViewer sceneProvider={sceneProvider} />;
 };
 
 export default App;

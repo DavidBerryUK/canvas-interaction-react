@@ -1,28 +1,15 @@
 import Point from '../../geometry/Point';
 
 export default class CanvasContext {
-	// are transistions (move/zoom) animated
-	animated: boolean = true;
-
-	// canvas zoom
-	scale: number = 1;
+	animated: boolean = true; // are transistions (move/zoom) animated
+	scale: number = 1; // canvas zoom factor
 	targetScale: number = 1; // animation target zoom level
-
-	// canvas offset
-	offset: Point = Point.zero;
+	offset: Point = Point.zero; // actual canvas offset
 	target: Point = Point.zero; // animation target position
-
-	isDragging = false;
-	lastDist = 0;
-
-	last: Point = Point.zero;
-	lastMouse: Point = Point.zero;
-	pinchMid: Point = Point.zero;
-
-	minX = Infinity;
-	minY = Infinity;
-	maxX = -Infinity;
-	maxY = -Infinity;
+	isDragging = false; // is the cursor dragging, (mouse button is down)
+	lastMouseCanvasPosition: Point = Point.zero; // last recorded position of the mouse
+	touchGesturePinchMid: Point = Point.zero; // for touch gesture handling
+	touchGestureLastDist: number = 0;
 
 	getPoint = (withAnimation: boolean) => {
 		if (withAnimation) {

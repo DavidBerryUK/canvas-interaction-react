@@ -5,20 +5,25 @@ import type CanvasContext from '../models/CanvasContext';
 const useEventHandlersMouse = (context: CanvasContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleMouseDownEvent = (e: MouseEvent) => {
 		context.isDragging = true;
-		context.last = Point.createfromMouseEvent(e);
+
+		const rect = Rectangle.createFromDomRect(canvasRef.current!.getBoundingClientRect());
+		const mousePoint = Point.createfromMouseEvent(e);
+		context.lastMouseCanvasPosition = mousePoint.cloneWithSubtract(rect.origin);
 	};
 
 	const handleMouseMouseEvent = (event: MouseEvent) => {
 		// Track last mouse position for keyboard zoom
 		const rect = Rectangle.createFromDomRect(canvasRef.current!.getBoundingClientRect());
 		const mousePoint = Point.createfromMouseEvent(event);
-		context.lastMouse = mousePoint.cloneWithSubtract(rect.origin);
+
+		const mouseCanvasPosition = mousePoint.cloneWithSubtract(rect.origin);
 
 		if (context.isDragging) {
-			const delta = new Point(event.clientX - context.last.x, event.clientY - context.last.y);
+			const delta = mouseCanvasPosition.cloneWithSubtract(context.lastMouseCanvasPosition);
 			context.target = context.target.cloneWithAdd(delta);
-			context.last = new Point(event.clientX, event.clientY);
 		}
+
+		context.lastMouseCanvasPosition = mouseCanvasPosition;
 	};
 
 	const handleMouseUpEvent = () => {

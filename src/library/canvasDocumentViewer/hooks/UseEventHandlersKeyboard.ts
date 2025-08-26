@@ -19,11 +19,11 @@ const useEventHandlersKeyboard = (context: CanvasContext, provider: ICanvasDocum
 	// --- Keyboard zoom helpers ---
 
 	const handleKeyboardZoomIn = (withAnimation: boolean = true) => {
-		navigate.zoomAt(context.lastMouse, 1.2, withAnimation);
+		navigate.zoomAt(context.lastMouseCanvasPosition, 1.2, withAnimation);
 	};
 
 	const handleKeyboardZoomOut = (withAnimation: boolean = true) => {
-		navigate.zoomAt(context.lastMouse, 1 / 1.2, withAnimation);
+		navigate.zoomAt(context.lastMouseCanvasPosition, 1 / 1.2, withAnimation);
 	};
 
 	const handleKeyDownEvent = (e: KeyboardEvent) => {
