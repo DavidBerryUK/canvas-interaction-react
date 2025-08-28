@@ -1,7 +1,9 @@
-import type React from 'react';
-import type CanvasContext from '../../models/CanvasContext';
+import './Styles.scss';
 import { MousePointerClick, Smartphone, ZoomIn, Fullscreen, ArrowUpDown, ArrowLeftRight, ToggleLeft, ToggleRight, Expand, AlignCenterIcon, CircleDotDashed, Grid3x3, SquareSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import type CanvasContext from '../../models/CanvasContext';
+import type React from 'react';
+import UIfrostedBackground from '../../../../components/frostedBackground/UIfrostedBackground';
 
 interface IProperties {
 	state: CanvasContext;
@@ -57,7 +59,7 @@ const UIInstructions: React.FC<IProperties> = (props) => {
 	];
 
 	return (
-		<div className="instructions frosted-background">
+		<UIfrostedBackground className="instructions">
 			<h2>Controls:</h2>
 			<ul className="instructions-list">
 				{controls.map((c, idx) => (
@@ -68,7 +70,7 @@ const UIInstructions: React.FC<IProperties> = (props) => {
 					</li>
 				))}
 			</ul>
-		</div>
+		</UIfrostedBackground>
 	);
 };
 

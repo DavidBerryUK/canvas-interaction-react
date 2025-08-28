@@ -1,10 +1,12 @@
-import type React from 'react';
 import './Style.scss';
-import { useEffect, useState } from 'react';
-import OptionModel from '../../models/OptionModel';
-import FactorySceneOptions from '../../factories/FactorySceneOptions';
-import type EnumDemoScenes from '../../enums/EnumDemoScenes';
 import { getEnumDemoScene } from '../../enums/EnumDemoScenes';
+import { useEffect, useState } from 'react';
+import FactorySceneOptions from '../../factories/FactorySceneOptions';
+import OptionModel from '../../models/OptionModel';
+import type EnumDemoScenes from '../../enums/EnumDemoScenes';
+import type React from 'react';
+import UIfrostedBackground from '../frostedBackground/UIfrostedBackground';
+import UIRadioList from '../radioList/UIRadioList';
 
 interface IProperties {
 	onChangeScene: (scene: EnumDemoScenes) => void;
@@ -20,26 +22,16 @@ const UIToolBar: React.FC<IProperties> = (props) => {
 		setOptions(options);
 	}, []);
 
-	const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		var option = options.find((item) => item.id == event.target.value)!;
-		setOption(option);
-		props.onChangeScene(getEnumDemoScene(option.id)!);
+	const handleOnChange = (value: OptionModel) => {
+		setOption(value);
+		props.onChangeScene(getEnumDemoScene(value.id)!);
 	};
 
 	return (
-		<div className="ui-toolbar frosted-background">
+		<UIfrostedBackground className="ui-toolbar">
 			<h2>Scenes</h2>
-			<ul>
-				{options.map((item) => (
-					<li>
-						<label>
-							<input type="radio" value={item.id} checked={item.id === option.id} onChange={handleOnChange} />
-							{item.text}
-						</label>
-					</li>
-				))}
-			</ul>
-		</div>
+			<UIRadioList options={options} value={option} onChange={handleOnChange} />
+		</UIfrostedBackground>
 	);
 };
 

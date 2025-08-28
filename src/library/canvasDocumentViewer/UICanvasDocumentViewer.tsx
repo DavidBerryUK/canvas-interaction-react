@@ -9,7 +9,7 @@ import useHandleTouchEvents from './hooks/UseHandleTouchEvents';
 import useCanvasDocumentState from './hooks/UseCanvasDocumentState';
 import useCanvasNavigation from './hooks/UseCanvasNavigation';
 import type Size from '../geometry/Size';
-import UIToolBar from '../../components/toolBar/UIToolBar';
+import './Style.scss';
 
 interface IProperties {
 	sceneProvider: ICanvasDocumentViewerSceneProvider;
@@ -66,7 +66,7 @@ const UICanvasDocumentViewer: React.FC<IProperties> = (props) => {
 	}, []);
 
 	return (
-		<div className="canvas-container">
+		<div className="ui-canvas-document-viewer">
 			<canvas ref={canvasRef} />
 			<UIInstructions state={canvasState} />
 		</div>
