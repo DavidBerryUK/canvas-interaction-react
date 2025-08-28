@@ -1,4 +1,4 @@
-import Point from '../models/geometry/Point';
+import Point from '../geometry/Point';
 
 export default class UtilitiesBezier {
 	/**

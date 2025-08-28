@@ -33,18 +33,11 @@ export default class NodeModel {
 	getSockets(placement?: EnumSocketPlacement) {
 		return this.connectionSockets.filter((socket) => socket.placement === placement);
 	}
+
 	socketCount(placement?: EnumSocketPlacement): number {
 		if (placement) {
 			return this.getSockets(placement).length;
 		}
 		return this.connectionSockets.length;
-	}
-
-	draw(ctx: CanvasRenderingContext2D) {
-		ctx.fillStyle = '#ddd';
-		ctx.fillRect(this.rectangle.left, this.rectangle.top, this.rectangle.width, this.rectangle.height);
-		ctx.fillStyle = '#000';
-		ctx.font = '16px sans-serif';
-		ctx.fillText(this.label, this.rectangle.left + 10, this.rectangle.top + this.rectangle.heightHalf + 5);
 	}
 }

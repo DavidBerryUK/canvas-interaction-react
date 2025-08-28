@@ -57,8 +57,8 @@ const UIInstructions: React.FC<IProperties> = (props) => {
 	];
 
 	return (
-		<div className="instructions">
-			<p className="font-bold mb-2">Controls:</p>
+		<div className="instructions frosted-background">
+			<h2>Controls:</h2>
 			<ul className="instructions-list">
 				{controls.map((c, idx) => (
 					<li key={idx} className="instruction-row">

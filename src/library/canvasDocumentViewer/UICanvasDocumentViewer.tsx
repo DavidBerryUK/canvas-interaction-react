@@ -9,6 +9,7 @@ import useHandleTouchEvents from './hooks/UseHandleTouchEvents';
 import useCanvasDocumentState from './hooks/UseCanvasDocumentState';
 import useCanvasNavigation from './hooks/UseCanvasNavigation';
 import type Size from '../geometry/Size';
+import UIToolBar from '../../components/toolBar/UIToolBar';
 
 interface IProperties {
 	sceneProvider: ICanvasDocumentViewerSceneProvider;

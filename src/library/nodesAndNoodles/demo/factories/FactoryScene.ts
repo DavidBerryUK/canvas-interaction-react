@@ -1,8 +1,8 @@
-import EnumNode from '../../library/nodesAndNoodles/enums/EnumNodes';
-import LayoutManager from '../../library/nodesAndNoodles/layout/LayoutManager';
-import NodeGroupModel from '../../library/nodesAndNoodles/scene/NodeGroupModel';
-import NodeModel from '../../library/nodesAndNoodles/scene/NodeModel';
-import SceneModel from '../../library/nodesAndNoodles/scene/SceneModel';
+import EnumNode from '../../enums/EnumNodes';
+import LayoutManager from '../../layout/LayoutManager';
+import NodeGroupModel from '../../scene/NodeGroupModel';
+import NodeModel from '../../scene/NodeModel';
+import SceneModel from '../../scene/SceneModel';
 
 export default class FactoryScene {
 	static get(): SceneModel {
