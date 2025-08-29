@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "concurrently \"vite\" \"tsc --noEmit --watch\"",
+		"dev": "concurrently \"vite --open\" \"tsc --noEmit --watch\"",
 		"type-check": "tsc --noEmit --watch",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",

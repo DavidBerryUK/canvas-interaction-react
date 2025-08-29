@@ -8,13 +8,7 @@ export default class EnumDemoShape {
 	strokeColor?: EnumShapeColor;
 	style: EnumShapeDrawStyle;
 
-	constructor(
-		rectangle: Rectangle,
-		type: EnumShapeType,
-		fillColor: EnumShapeColor,
-		style: EnumShapeDrawStyle = EnumShapeDrawStyle.Fill,
-		strokeColor?: EnumShapeColor
-	) {
+	constructor(rectangle: Rectangle, type: EnumShapeType, fillColor: EnumShapeColor, style: EnumShapeDrawStyle = EnumShapeDrawStyle.Fill, strokeColor?: EnumShapeColor) {
 		this.rectangle = rectangle;
 		this.type = type;
 		this.fillColor = fillColor;
