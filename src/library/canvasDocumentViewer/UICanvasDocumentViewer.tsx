@@ -36,6 +36,7 @@ const UICanvasDocumentViewer: React.FC<IProperties> = ({ sceneProvider }) => {
 	// Ensure canvas re-renders if the provider changes
 	useEffect(() => {
 		render();
+		navigate.zoomToFit(false);
 	}, [render, sceneProvider]);
 
 	// Attach event listeners with up-to-date refs
