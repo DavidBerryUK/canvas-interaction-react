@@ -1,69 +1,72 @@
+import './Style.scss';
 import React, { useRef, useEffect } from 'react';
 import type ICanvasDocumentViewerSceneProvider from './interfaces/ICanvasDocumentViewerSceneProvider';
 import UIInstructions from './sections/instructions/UIInstructions';
+import useCanvasDocumentState from './hooks/UseCanvasDocumentState';
+import useCanvasNavigation from './hooks/UseCanvasNavigation';
 import useDrawCanvas from './hooks/UseDrawCanvas';
 import useEventHandlersKeyboard from './hooks/UseEventHandlersKeyboard';
 import useEventHandlersMouse from './hooks/UseEventHandlersMouse';
 import useHandleCanvasResize from './hooks/UseHandleCanvasResize';
 import useHandleTouchEvents from './hooks/UseHandleTouchEvents';
-import useCanvasDocumentState from './hooks/UseCanvasDocumentState';
-import useCanvasNavigation from './hooks/UseCanvasNavigation';
-import type Size from '../geometry/Size';
-import './Style.scss';
 
 interface IProperties {
 	sceneProvider: ICanvasDocumentViewerSceneProvider;
 }
 
-const UICanvasDocumentViewer: React.FC<IProperties> = (props) => {
+const UICanvasDocumentViewer: React.FC<IProperties> = ({ sceneProvider }) => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const { canvasState } = useCanvasDocumentState();
-	const { render } = useDrawCanvas(canvasState, canvasRef, props.sceneProvider);
+	const { render } = useDrawCanvas(canvasState, canvasRef, sceneProvider);
 	const { mouseEvents } = useEventHandlersMouse(canvasState, canvasRef);
-	const { keyboardEvents } = useEventHandlersKeyboard(canvasState, props.sceneProvider, canvasRef);
+	const { keyboardEvents } = useEventHandlersKeyboard(canvasState, sceneProvider, canvasRef);
 	const { touchEvents } = useHandleTouchEvents(canvasState, canvasRef);
-	const { navigate } = useCanvasNavigation(canvasRef, canvasState, props.sceneProvider);
-	let firstResize = true;
+	const { navigate } = useCanvasNavigation(canvasRef, canvasState, sceneProvider);
 
-	const handleCanvasResized = (_: Size) => {
-		if (!firstResize) {
-			return;
-		}
-		firstResize = true;
+	const firstResizeRef = useRef(true);
+
+	const handleCanvasResized = () => {
+		if (!firstResizeRef.current) return;
+		firstResizeRef.current = false;
 		navigate.zoomToFit(false);
 	};
 
 	useHandleCanvasResize(canvasRef, handleCanvasResized);
 
+	// Ensure canvas re-renders if the provider changes
+	useEffect(() => {
+		render();
+	}, [render, sceneProvider]);
+
+	// Attach event listeners with up-to-date refs
 	useEffect(() => {
 		const canvas = canvasRef.current!;
+		const handleMouseDown = (e: MouseEvent) => mouseEvents.handleMouseDownEvent(e);
+		const handleMouseMove = (e: MouseEvent) => mouseEvents.handleMouseMouseEvent(e);
+		const handleMouseUp = () => mouseEvents.handleMouseUpEvent();
+		const handleWheel = (e: WheelEvent) => mouseEvents.handleWheelEvent(e);
+		const handleTouchStart = (e: TouchEvent) => touchEvents.handleTouchStartEvent(e);
+		const handleTouchMove = (e: TouchEvent) => touchEvents.handleTouchMoveEvent(e);
+		const handleKeyDown = (e: KeyboardEvent) => keyboardEvents.handleKeyDownEvent(e);
 
-		// Mouse + touch handlers
-		canvas.addEventListener('mousedown', mouseEvents.handleMouseDownEvent);
-		window.addEventListener('mousemove', mouseEvents.handleMouseMouseEvent);
-		window.addEventListener('mouseup', mouseEvents.handleMouseUpEvent);
-		window.addEventListener('wheel', mouseEvents.handleWheelEvent, { passive: false });
-		// Pinch zoom
-		canvas.addEventListener('touchstart', touchEvents.handleTouchStartEvent, { passive: false });
-		canvas.addEventListener('touchmove', touchEvents.handleTouchMoveEvent, { passive: false });
-		// Keyboard shortcuts
-		window.addEventListener('keydown', keyboardEvents.handleKeyDownEvent);
+		canvas.addEventListener('mousedown', handleMouseDown);
+		window.addEventListener('mousemove', handleMouseMove);
+		window.addEventListener('mouseup', handleMouseUp);
+		window.addEventListener('wheel', handleWheel, { passive: false });
+		canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+		canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+		window.addEventListener('keydown', handleKeyDown);
 
-		// render canvas
-		render();
-
-		// Cleanup function to remove listeners
 		return () => {
-			canvas.removeEventListener('mousedown', mouseEvents.handleMouseDownEvent);
-			window.removeEventListener('mousemove', mouseEvents.handleMouseMouseEvent);
-			window.removeEventListener('mouseup', mouseEvents.handleMouseUpEvent);
-			window.removeEventListener('wheel', mouseEvents.handleWheelEvent);
-			canvas.removeEventListener('touchmove', touchEvents.handleTouchMoveEvent);
-			canvas.removeEventListener('touchstart', touchEvents.handleTouchStartEvent);
-
-			window.removeEventListener('keydown', keyboardEvents.handleKeyDownEvent);
+			canvas.removeEventListener('mousedown', handleMouseDown);
+			window.removeEventListener('mousemove', handleMouseMove);
+			window.removeEventListener('mouseup', handleMouseUp);
+			window.removeEventListener('wheel', handleWheel);
+			canvas.removeEventListener('touchstart', handleTouchStart);
+			canvas.removeEventListener('touchmove', handleTouchMove);
+			window.removeEventListener('keydown', handleKeyDown);
 		};
-	}, []);
+	}, [mouseEvents, touchEvents, keyboardEvents]); // reattach if handlers change
 
 	return (
 		<div className="ui-canvas-document-viewer">

@@ -14,6 +14,10 @@ export default class DemoSceneProvider implements ICanvasDocumentViewerSceneProv
 		this.createDemoShapes();
 	}
 
+	get name(): string {
+		return `Demo Scene Profiles  shapes:${this.shapes.length}  size:${this.getBoundingRect().toString()}`;
+	}
+
 	getBoundingRect(): Rectangle {
 		if (this.boundingRect === undefined) {
 			this.boundingRect == (this.boundingRect = this.calculateAndCacheBoundingRect());
@@ -36,10 +40,7 @@ export default class DemoSceneProvider implements ICanvasDocumentViewerSceneProv
 				regionNo++;
 				var id = `${regionNo}`;
 				var name = `region ${regionNo} of 9`;
-				var rect = new Rectangle(
-					new Point(boundingRect.x + x * columnWidth + 10, boundingRect.y + y * rowHeight + 10),
-					new Size(regionWidth, regionHeight)
-				);
+				var rect = new Rectangle(new Point(boundingRect.x + x * columnWidth + 10, boundingRect.y + y * rowHeight + 10), new Size(regionWidth, regionHeight));
 				regions.push(new CanvasRegion(id, name, rect));
 			}
 		}
@@ -89,8 +90,7 @@ export default class DemoSceneProvider implements ICanvasDocumentViewerSceneProv
 			const type = Math.floor((Math.random() * Object.keys(EnumShapeType).length) / 2);
 			const fillColor = Math.floor(Math.random() * 5);
 			const style = Math.floor(Math.random() * 3) as EnumShapeDrawStyle;
-			const strokeColor =
-				style === EnumShapeDrawStyle.Stroke || style === EnumShapeDrawStyle.FillAndStroke ? Math.floor(Math.random() * 5) : undefined;
+			const strokeColor = style === EnumShapeDrawStyle.Stroke || style === EnumShapeDrawStyle.FillAndStroke ? Math.floor(Math.random() * 5) : undefined;
 
 			this.shapes.push(new EnumDemoShape(rect, type, fillColor, style, strokeColor));
 		}

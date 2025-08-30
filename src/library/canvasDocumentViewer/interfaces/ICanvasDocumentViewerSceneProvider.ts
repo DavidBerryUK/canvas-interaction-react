@@ -9,6 +9,11 @@ import CanvasRegion from '../models/CanvasRegion';
  */
 export default interface ICanvasDocumentViewerSceneProvider {
 	/**
+	 * The scene name
+	 */
+	name: string;
+
+	/**
 	 * Returns the bounding rectangle of the document.
 	 *
 	 * This method is invoked by the `UICanvasDocumentViewer` to determine

@@ -13,6 +13,10 @@ export default class NodesAndNoodlesSceneRenderer implements ICanvasDocumentView
 		this.boundingRect = this.calculateAndCacheBoundingRect();
 	}
 
+	get name(): string {
+		return `Nodes and Noodles  size:${this.getBoundingRect().toString()}`;
+	}
+
 	getBoundingRect(): Rectangle {
 		if (this.boundingRect === undefined) {
 			this.boundingRect == (this.boundingRect = this.calculateAndCacheBoundingRect());

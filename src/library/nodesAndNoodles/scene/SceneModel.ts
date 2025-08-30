@@ -7,6 +7,7 @@ import NodeGroupModel from './NodeGroupModel';
 import NodeModel from './NodeModel';
 import PulseModel from './PulseModel';
 import Point from '../../geometry/Point';
+import NodeRenderer from '../renderers/NodeRenderer';
 
 export default class SceneModel {
 	nodes: Array<NodeModel> = new Array<NodeModel>();
@@ -115,7 +116,7 @@ export default class SceneModel {
 		// draw nodes
 
 		this.nodes.forEach((node) => {
-			node.draw(ctx);
+			NodeRenderer.render(ctx, node);
 		});
 
 		// draw connections and pluses
