@@ -1,77 +1,61 @@
-import { useCallback, useMemo } from 'react';
 import type ICanvasDocumentViewerSceneProvider from '../interfaces/ICanvasDocumentViewerSceneProvider';
 import type CanvasContext from '../models/CanvasContext';
 import useCanvasNavigation from './UseCanvasNavigation';
 
-const useEventHandlersKeyboard = (context: CanvasContext, provider: ICanvasDocumentViewerSceneProvider, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
-	const { navigate } = useCanvasNavigation(canvasRef, context, provider);
+const useEventHandlersKeyboard = (context: React.RefObject<CanvasContext>, sceneProvider: React.RefObject<ICanvasDocumentViewerSceneProvider>, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
+	const { navigate } = useCanvasNavigation(canvasRef, context, sceneProvider);
 
 	// --- Keyboard zoom helpers ---
 
-	const zoomToRegion = useCallback(
-		(regionKey: string) => {
-			const region = provider.getRegions().find((region) => region.id === regionKey);
-			if (!region) {
-				return;
-			}
-			navigate.zoomToRectangle(region.rectangle, context.animated);
-		},
-		[provider, navigate, context.animated]
-	);
+	const zoomToRegion = (regionKey: string) => {
+		const region = sceneProvider.current.getRegions().find((region) => region.id === regionKey);
+		if (!region) {
+			return;
+		}
+		navigate.zoomToRectangle(region.rectangle, context.current.animated);
+	};
 
-	const handleKeyboardZoomIn = useCallback(
-		(withAnimation: boolean = true) => {
-			navigate.zoomAt(context.lastMouseCanvasPosition, 1.2, withAnimation);
-		},
-		[navigate, context.lastMouseCanvasPosition]
-	);
+	const handleKeyboardZoomIn = (withAnimation: boolean = true) => {
+		navigate.zoomAt(context.current.lastMouseCanvasPosition, 1.2, withAnimation);
+	};
 
-	const handleKeyboardZoomOut = useCallback(
-		(withAnimation: boolean = true) => {
-			navigate.zoomAt(context.lastMouseCanvasPosition, 1 / 1.2, withAnimation);
-		},
-		[navigate, context.lastMouseCanvasPosition]
-	);
+	const handleKeyboardZoomOut = (withAnimation: boolean = true) => {
+		navigate.zoomAt(context.current.lastMouseCanvasPosition, 1 / 1.2, withAnimation);
+	};
 
-	const handleKeyDownEvent = useCallback(
-		(e: KeyboardEvent) => {
-			console.log(`keydown event for provider:${provider.name}`);
+	const handleKeyDownEvent = (e: KeyboardEvent) => {
+		console.log(`keydown event for provider:${sceneProvider.current.name}`);
 
-			const key = e.key.toLowerCase(); // normalize key
+		const key = e.key.toLowerCase(); // normalize key
 
-			const actions: Record<string, () => void> = {
-				'+': () => handleKeyboardZoomIn(context.animated),
-				'-': () => handleKeyboardZoomOut(context.animated),
-				'0': () => navigate.resetView(context.animated),
-				f: () => navigate.zoomToFit(context.animated),
-				x: () => navigate.zoomToFill(context.animated),
-				w: () => navigate.zoomToWidth(context.animated),
-				h: () => navigate.zoomToHeight(context.animated),
-				c: () => navigate.centerDocument(context.animated),
-			};
+		const actions: Record<string, () => void> = {
+			'+': () => handleKeyboardZoomIn(context.current.animated),
+			'-': () => handleKeyboardZoomOut(context.current.animated),
+			'0': () => navigate.resetView(context.current.animated),
+			f: () => navigate.zoomToFit(context.current.animated),
+			x: () => navigate.zoomToFill(context.current.animated),
+			w: () => navigate.zoomToWidth(context.current.animated),
+			h: () => navigate.zoomToHeight(context.current.animated),
+			c: () => navigate.centerDocument(context.current.animated),
+		};
 
-			if (actions[key]) {
-				e.preventDefault();
-				actions[key]();
-				return;
-			}
+		if (actions[key]) {
+			e.preventDefault();
+			actions[key]();
+			return;
+		}
 
-			if (key >= '1' && key <= '9') {
-				e.preventDefault();
-				zoomToRegion(key);
-			}
-		},
-		[provider, context.animated, handleKeyboardZoomIn, handleKeyboardZoomOut, navigate, zoomToRegion]
-	);
+		if (key >= '1' && key <= '9') {
+			e.preventDefault();
+			zoomToRegion(key);
+		}
+	};
 
-	const keyboardEvents = useMemo(
-		() => ({
+	return {
+		keyboardEvents: {
 			handleKeyDownEvent,
-		}),
-		[handleKeyDownEvent]
-	);
-
-	return { keyboardEvents };
+		},
+	};
 };
 
 export default useEventHandlersKeyboard;

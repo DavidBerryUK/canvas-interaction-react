@@ -1,15 +1,15 @@
 import Point from '../../../library/geometry/Point';
 import type CanvasContext from '../models/CanvasContext';
 
-const useHandleTouchEvents = (context: CanvasContext, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
+const useHandleTouchEvents = (context: React.RefObject<CanvasContext>, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
 	const handleTouchStartEvent = (e: TouchEvent) => {
 		if (e.touches.length === 2) {
 			const dx = e.touches[0].clientX - e.touches[1].clientX;
 			const dy = e.touches[0].clientY - e.touches[1].clientY;
-			context.touchGestureLastDist = Math.hypot(dx, dy);
+			context.current.touchGestureLastDist = Math.hypot(dx, dy);
 
 			// Midpoint in screen coords
-			context.touchGesturePinchMid = new Point((e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
+			context.current.touchGesturePinchMid = new Point((e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
 		}
 	};
 
@@ -20,21 +20,21 @@ const useHandleTouchEvents = (context: CanvasContext, canvasRef: React.RefObject
 			const dx = e.touches[0].clientX - e.touches[1].clientX;
 			const dy = e.touches[0].clientY - e.touches[1].clientY;
 			const dist = Math.hypot(dx, dy);
-			const zoom = dist / context.touchGestureLastDist;
+			const zoom = dist / context.current.touchGestureLastDist;
 
 			// Convert midpoint to world coords before zoom
 			const rect = canvasRef.current!.getBoundingClientRect();
-			const cursorX = context.touchGesturePinchMid.x - rect.left;
-			const cursorY = context.touchGesturePinchMid.y - rect.top;
-			const worldX = (cursorX - context.target.x) / context.targetScale;
-			const worldY = (cursorY - context.target.y) / context.targetScale;
+			const cursorX = context.current.touchGesturePinchMid.x - rect.left;
+			const cursorY = context.current.touchGesturePinchMid.y - rect.top;
+			const worldX = (cursorX - context.current.target.x) / context.current.targetScale;
+			const worldY = (cursorY - context.current.target.y) / context.current.targetScale;
 
-			context.targetScale *= zoom;
+			context.current.targetScale *= zoom;
 
 			// Adjust offset so pinch midpoint stays fixed
-			context.target = new Point(cursorX - worldX * context.targetScale, cursorY - worldY * context.targetScale);
+			context.current.target = new Point(cursorX - worldX * context.current.targetScale, cursorY - worldY * context.current.targetScale);
 
-			context.touchGestureLastDist = dist;
+			context.current.touchGestureLastDist = dist;
 		}
 	};
 

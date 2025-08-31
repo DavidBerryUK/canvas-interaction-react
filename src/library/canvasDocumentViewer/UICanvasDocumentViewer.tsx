@@ -2,21 +2,23 @@ import './Style.scss';
 import React, { useRef, useEffect } from 'react';
 import type ICanvasDocumentViewerSceneProvider from './interfaces/ICanvasDocumentViewerSceneProvider';
 import UIInstructions from './sections/instructions/UIInstructions';
-import useCanvasDocumentState from './hooks/UseCanvasDocumentState';
+
 import useCanvasNavigation from './hooks/UseCanvasNavigation';
 import useDrawCanvas from './hooks/UseDrawCanvas';
 import useEventHandlersKeyboard from './hooks/UseEventHandlersKeyboard';
 import useEventHandlersMouse from './hooks/UseEventHandlersMouse';
 import useHandleCanvasResize from './hooks/UseHandleCanvasResize';
 import useHandleTouchEvents from './hooks/UseHandleTouchEvents';
+import CanvasContext from './models/CanvasContext';
 
 interface IProperties {
-	sceneProvider: ICanvasDocumentViewerSceneProvider;
+	sceneProvider: React.RefObject<ICanvasDocumentViewerSceneProvider>;
 }
 
 const UICanvasDocumentViewer: React.FC<IProperties> = ({ sceneProvider }) => {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
-	const { canvasState } = useCanvasDocumentState();
+	const canvasState = useRef<CanvasContext>(new CanvasContext());
+
 	const { render } = useDrawCanvas(canvasState, canvasRef, sceneProvider);
 	const { mouseEvents } = useEventHandlersMouse(canvasState, canvasRef);
 	const { keyboardEvents } = useEventHandlersKeyboard(canvasState, sceneProvider, canvasRef);
@@ -33,11 +35,10 @@ const UICanvasDocumentViewer: React.FC<IProperties> = ({ sceneProvider }) => {
 
 	useHandleCanvasResize(canvasRef, handleCanvasResized);
 
-	// Ensure canvas re-renders if the provider changes
 	useEffect(() => {
 		render();
 		navigate.zoomToFit(false);
-	}, [render, sceneProvider]);
+	}, []);
 
 	// Attach event listeners with up-to-date refs
 	useEffect(() => {
@@ -67,7 +68,7 @@ const UICanvasDocumentViewer: React.FC<IProperties> = ({ sceneProvider }) => {
 			canvas.removeEventListener('touchmove', handleTouchMove);
 			window.removeEventListener('keydown', handleKeyDown);
 		};
-	}, [mouseEvents, touchEvents, keyboardEvents]); // reattach if handlers change
+	}, []); // reattach if handlers change
 
 	return (
 		<div className="ui-canvas-document-viewer">

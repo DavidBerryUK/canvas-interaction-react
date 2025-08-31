@@ -10,7 +10,7 @@ const LABEL_COLOR = '#3F5C7A'; // dark blue for labels
 const useDrawGrid = () => {
 	const alphaCache = new Map<string, number>();
 
-	const drawGrid = (context: CanvasContext, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+	const drawGrid = (context: React.RefObject<CanvasContext>, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
 		// Fill background
 		// Fill background
 		ctx.save();
@@ -19,7 +19,7 @@ const useDrawGrid = () => {
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 		ctx.restore();
 
-		const zoom = context.scale;
+		const zoom = context.current.scale;
 		const minPixels = 50;
 		const baseSpacing = 50;
 		const niceFactors = [1, 2, 5];
@@ -36,8 +36,8 @@ const useDrawGrid = () => {
 		const majorSpacing = minorSpacing * 4;
 
 		const invScale = 1 / zoom;
-		const left = -context.offset.x * invScale;
-		const top = -context.offset.y * invScale;
+		const left = -context.current.offset.x * invScale;
+		const top = -context.current.offset.y * invScale;
 		const right = left + canvas.width * invScale;
 		const bottom = top + canvas.height * invScale;
 
@@ -148,14 +148,14 @@ const useDrawGrid = () => {
 			const labelOffset = 2;
 
 			for (let x = Math.floor(left / majorSpacing) * majorSpacing; x <= right; x += majorSpacing) {
-				const screenX = x * zoom + context.offset.x; // transform world → screen
+				const screenX = x * zoom + context.current.offset.x; // transform world → screen
 				if (screenX >= 0 && screenX <= canvas.width) {
 					ctx.fillText(`${Math.round(x)}`, screenX + labelOffset, 0 + labelOffset);
 				}
 			}
 
 			for (let y = Math.floor(top / majorSpacing) * majorSpacing; y <= bottom; y += majorSpacing) {
-				const screenY = y * zoom + context.offset.y;
+				const screenY = y * zoom + context.current.offset.y;
 				if (screenY >= 0 && screenY <= canvas.height) {
 					ctx.fillText(`${Math.round(y)}`, 0 + labelOffset, screenY + labelOffset);
 				}

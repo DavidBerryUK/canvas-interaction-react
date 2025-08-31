@@ -6,7 +6,7 @@ import type ICanvasDocumentViewerSceneProvider from '../interfaces/ICanvasDocume
 import useDrawGrid from './UseDrawGrid';
 import useDrawPrimitiveShapes from './UseDrawPrimitiveShapes';
 
-const useDrawCanvas = (context: CanvasContext, canvasRef: React.RefObject<HTMLCanvasElement | null>, sceneProvider: ICanvasDocumentViewerSceneProvider | undefined) => {
+const useDrawCanvas = (context: React.RefObject<CanvasContext>, canvasRef: React.RefObject<HTMLCanvasElement | null>, sceneProvider: React.RefObject<ICanvasDocumentViewerSceneProvider>) => {
 	const drawPrimitiveShapes = useDrawPrimitiveShapes();
 
 	let canvas: HTMLCanvasElement | null;
@@ -27,7 +27,7 @@ const useDrawCanvas = (context: CanvasContext, canvasRef: React.RefObject<HTMLCa
 
 		clearScene();
 		ctx.save();
-		ctx.setTransform(context.scale, 0, 0, context.scale, context.offset.x, context.offset.y);
+		ctx.setTransform(context.current.scale, 0, 0, context.current.scale, context.current.offset.x, context.current.offset.y);
 		//
 		// draw the grid
 		//
@@ -37,20 +37,20 @@ const useDrawCanvas = (context: CanvasContext, canvasRef: React.RefObject<HTMLCa
 			//
 			// draw document broundry
 			//
-			drawPrimitiveShapes.shapes.roundedRect(ctx, { rect: sceneProvider.getBoundingRect(), lineWidth: 2, strokeColor: '#719FCC', radius: 8 });
+			drawPrimitiveShapes.shapes.roundedRect(ctx, { rect: sceneProvider.current.getBoundingRect(), lineWidth: 2, strokeColor: '#719FCC', radius: 8 });
 
 			// invert the transform to get scene coordinates
-			const visibleSceneArea = new Rectangle(new Point(-context.offset.x / context.scale, -context.offset.y / context.scale), new Size(canvas.width / context.scale, canvas.height / context.scale));
+			const visibleSceneArea = new Rectangle(new Point(-context.current.offset.x / context.current.scale, -context.current.offset.y / context.current.scale), new Size(canvas.width / context.current.scale, canvas.height / context.current.scale));
 
 			//
 			// draw scene using provider
 			//
-			sceneProvider.render(ctx, visibleSceneArea);
+			sceneProvider.current.render(ctx, visibleSceneArea);
 
 			//
 			// draw regions
 			//
-			var regions = sceneProvider.getRegions();
+			var regions = sceneProvider.current.getRegions();
 
 			regions.forEach((region) => {
 				if (region.rectangle.intersects(visibleSceneArea)) {
@@ -61,9 +61,9 @@ const useDrawCanvas = (context: CanvasContext, canvasRef: React.RefObject<HTMLCa
 		ctx.restore();
 
 		// Smooth transition
-		context.scale += (context.targetScale - context.scale) * 0.15;
-		context.offset.x += (context.target.x - context.offset.x) * 0.15;
-		context.offset.y += (context.target.y - context.offset.y) * 0.15;
+		context.current.scale += (context.current.targetScale - context.current.scale) * 0.15;
+		context.current.offset.x += (context.current.target.x - context.current.offset.x) * 0.15;
+		context.current.offset.y += (context.current.target.y - context.current.offset.y) * 0.15;
 
 		requestAnimationFrame(render);
 	};

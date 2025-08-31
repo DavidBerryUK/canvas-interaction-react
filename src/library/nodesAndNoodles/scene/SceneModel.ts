@@ -126,7 +126,7 @@ export default class SceneModel {
 		});
 	}
 
-	toConsole() {
+	toDebugConsole() {
 		CF.clear();
 
 		CF.header('SceneModel');

@@ -81,7 +81,7 @@ export default class FactoryScene {
 
 		LayoutManager.layout(scene);
 
-		scene.toConsole();
+		// scene.toDebugConsole();
 
 		return scene;
 	}

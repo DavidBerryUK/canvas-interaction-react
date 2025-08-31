@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import EnumDemoScenes from '../../enums/EnumDemoScenes';
 import FactorySceneProvider from '../../factories/FactorySceneProvider';
 import type ICanvasDocumentViewerSceneProvider from '../../library/canvasDocumentViewer/interfaces/ICanvasDocumentViewerSceneProvider';
@@ -7,11 +7,11 @@ import UICanvasDocumentViewer from '../../library/canvasDocumentViewer/UICanvasD
 import UIToolBar from '../toolBar/UIToolBar';
 
 const UIApp: React.FC = () => {
-	const [sceneProvider, setSceneProvider] = useState<ICanvasDocumentViewerSceneProvider>(FactorySceneProvider.get(EnumDemoScenes.BurgerBarNodesAndNoodles));
+	const sceneProvider = useRef<ICanvasDocumentViewerSceneProvider>(FactorySceneProvider.get(EnumDemoScenes.BurgerBarNodesAndNoodles));
 
 	const handleOnSceneChangedEvent = (scene: EnumDemoScenes) => {
 		const provider = FactorySceneProvider.get(scene);
-		setSceneProvider(provider);
+		sceneProvider.current = provider;
 		console.log(provider);
 	};
 

@@ -6,18 +6,18 @@ import type React from 'react';
 import UIfrostedBackground from '../../../../components/frostedBackground/UIfrostedBackground';
 
 interface IProperties {
-	state: CanvasContext;
+	state: React.RefObject<CanvasContext>;
 }
 
 const UIInstructions: React.FC<IProperties> = (props) => {
-	const [isAnimated, setIsAnimated] = useState<boolean>(props.state.animated);
+	const [isAnimated, setIsAnimated] = useState<boolean>(props.state.current.animated);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === 'a' || e.key === 'A') {
 				// toggle animated state
-				props.state.animated = !props.state.animated;
-				setIsAnimated(props.state.animated);
+				props.state.current.animated = !props.state.current.animated;
+				setIsAnimated(props.state.current.animated);
 				// optionally force a re-render if needed
 				// e.g., by using a state hook or parent callback
 			}
@@ -30,7 +30,7 @@ const UIInstructions: React.FC<IProperties> = (props) => {
 		};
 	}, [props.state]);
 
-	const animationText = props.state.animated ? (
+	const animationText = props.state.current.animated ? (
 		<>
 			<b>ON</b>
 		</>
