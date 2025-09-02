@@ -104,20 +104,23 @@ export default class LayoutManager {
 	 */
 	private static calculateSocketPlacements(scene: SceneModel) {
 		scene.nodes.forEach((node) => {
+			if (node.socketCount() > 0) {
+			}
+
 			node.connectionSockets.forEach((socket) => {
 				const otherNode = socket.connectionNoodle.otherNode(node);
 				const nodeColumn = node.group?.column;
 				const otherNodeColumn = otherNode.group?.column;
 
 				if (nodeColumn === undefined) {
-					throw `Node ${EnumNode[node.id]} must be in a group with a defined column`;
+					throw `    Node ${EnumNode[node.id]} must be in a group with a defined column`;
 				}
 
 				if (otherNodeColumn === undefined) {
-					throw `Node ${EnumNode[otherNode.id]} must be in a group with a defined column`;
+					throw `    Node ${EnumNode[otherNode.id]} must be in a group with a defined column`;
 				}
 
-				if (nodeColumn < otherNodeColumn) {
+				if (nodeColumn <= otherNodeColumn) {
 					socket.placement = EnumSocketPlacement.right;
 				} else {
 					socket.placement = EnumSocketPlacement.left;

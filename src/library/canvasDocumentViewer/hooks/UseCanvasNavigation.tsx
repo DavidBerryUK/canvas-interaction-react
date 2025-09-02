@@ -6,8 +6,6 @@ import type Rectangle from '../../geometry/Rectangle';
 
 const useCanvasNavigation = (canvasRef: React.RefObject<HTMLCanvasElement | null>, context: React.RefObject<CanvasContext>, sceneProvider: React.RefObject<ICanvasDocumentViewerSceneProvider>) => {
 	const zoomAt = (cursor: Point, zoomFactor: number, withAnimation: boolean = true) => {
-		console.log(`zoom at point ${cursor.toString()}`);
-
 		// Convert cursor to world coords before zoom
 		const world = new Point((cursor.x - context.current.target.x) / context.current.targetScale, (cursor.y - context.current.target.y) / context.current.targetScale);
 
@@ -19,17 +17,10 @@ const useCanvasNavigation = (canvasRef: React.RefObject<HTMLCanvasElement | null
 	};
 
 	const centerDocument = (withAnimation: boolean = true) => {
-		console.log(`-------- center document --------`);
-		console.log(sceneProvider.current.name);
-
 		const contentRect = sceneProvider.current.getBoundingRect();
 
 		const contentScaledSize = new Size(contentRect.width * context.current.targetScale, contentRect.height * context.current.targetScale);
 		const canvasSize = new Size(canvasRef.current!.width, canvasRef.current!.height);
-
-		console.log(`content rect:${contentRect.toString()}`);
-		console.log(`content rect (scaled):${contentScaledSize.toString()}`);
-		console.log(`canvas size :${canvasSize.toString()}`);
 
 		const x = (canvasSize.width - contentScaledSize.width) / 2 - contentRect.x * context.current.targetScale;
 		const y = (canvasSize.height - contentScaledSize.height) / 2 - contentRect.y * context.current.targetScale;

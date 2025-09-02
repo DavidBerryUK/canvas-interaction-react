@@ -1,7 +1,5 @@
-import ConnectionNoodleModel from './ConnectionNoodleModel';
 import ConnectionSocketModel from './ConnectionSocketModel';
 import EnumNode from '../enums/EnumNodes';
-import EnumSocketFlowDirection from '../enums/EnumSocketFlowDirection';
 import EnumSocketPlacement from '../enums/EnumSocketPlacement';
 import NodeGroupModel from './NodeGroupModel';
 import Rectangle from '../../geometry/Rectangle';
@@ -25,8 +23,7 @@ export default class NodeModel {
 		this.group = value;
 	}
 
-	addSocket(direction: EnumSocketFlowDirection, noodle: ConnectionNoodleModel) {
-		const socket = new ConnectionSocketModel(this, noodle, direction);
+	addSocket(socket: ConnectionSocketModel) {
 		this.connectionSockets.push(socket);
 	}
 

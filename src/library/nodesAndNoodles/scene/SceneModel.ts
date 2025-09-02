@@ -8,6 +8,7 @@ import NodeModel from './NodeModel';
 import PulseModel from './PulseModel';
 import Point from '../../geometry/Point';
 import NodeRenderer from '../renderers/NodeRenderer';
+import ConnectionSocketModel from './ConnectionSocketModel';
 
 export default class SceneModel {
 	nodes: Array<NodeModel> = new Array<NodeModel>();
@@ -86,11 +87,17 @@ export default class SceneModel {
 	}
 
 	addConnection(nodeA: NodeModel, nodeB: NodeModel): SceneModel {
-		const noodle = new ConnectionNoodleModel(nodeA, nodeB);
+		const nodeASocket = new ConnectionSocketModel(nodeA, EnumSocketFlowDirection.output);
+		const nodeBSocket = new ConnectionSocketModel(nodeA, EnumSocketFlowDirection.input);
+
+		const noodle = new ConnectionNoodleModel(nodeA, nodeB, nodeASocket, nodeBSocket);
+		nodeASocket.connectionNoodle = noodle;
+		nodeBSocket.connectionNoodle = noodle;
+
 		this.connections.push(noodle);
 
-		nodeA.addSocket(EnumSocketFlowDirection.output, noodle);
-		nodeB.addSocket(EnumSocketFlowDirection.input, noodle);
+		nodeA.addSocket(nodeASocket);
+		nodeB.addSocket(nodeBSocket);
 
 		return this;
 	}

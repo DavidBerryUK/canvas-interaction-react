@@ -3,17 +3,22 @@ import PulseModel from './PulseModel';
 import PulseTrailModel from './PulseTrailModel';
 import UtilitiesBezier from '../../utilities/UtilitiesBezier';
 import UtilitiesEasing from '../../utilities/UtilitiesEasing';
-import Point from '../../geometry/Point';
 import AppConst from '../../../configurations/AppConst';
+import type ConnectionSocketModel from './ConnectionSocketModel';
 
 export default class ConnectionNoodleModel {
 	from: NodeModel;
 	to: NodeModel;
+	fromSocket: ConnectionSocketModel;
+	toSocket: ConnectionSocketModel;
+
 	pulses: Array<PulseModel> = new Array<PulseModel>();
 
-	constructor(from: NodeModel, to: NodeModel) {
+	constructor(from: NodeModel, to: NodeModel, fromSocket: ConnectionSocketModel, toSocket: ConnectionSocketModel) {
 		this.from = from;
 		this.to = to;
+		this.fromSocket = fromSocket;
+		this.toSocket = toSocket;
 	}
 
 	otherNode(node: NodeModel): NodeModel {
@@ -25,8 +30,12 @@ export default class ConnectionNoodleModel {
 	}
 
 	draw(ctx: CanvasRenderingContext2D) {
-		const start = new Point(this.from.rectangle.right, this.from.rectangle.centerY);
-		const end = new Point(this.to.rectangle.left, this.to.rectangle.centerY);
+		//const start = new Point(this.from.rectangle.right, this.from.rectangle.centerY);
+		//const end = new Point(this.to.rectangle.left, this.to.rectangle.centerY);
+
+		const start = this.fromSocket.point.cloneWithAdd(this.from.rectangle.origin);
+		const end = this.toSocket.point.cloneWithAdd(this.to.rectangle.origin);
+
 		const [p0, p1, p2, p3] = UtilitiesBezier.getBezierControlPoints(start, end);
 
 		ctx.strokeStyle = AppConst.noodle.COLOR;

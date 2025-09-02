@@ -11,14 +11,13 @@ import Point from '../../geometry/Point';
  */
 export default class ConnectionSocketModel {
 	node: NodeModel;
-	connectionNoodle: ConnectionNoodleModel;
+	connectionNoodle!: ConnectionNoodleModel;
 	point: Point;
 	flow: EnumSocketFlowDirection;
 	placement: EnumSocketPlacement;
 
-	constructor(node: NodeModel, connectionNoodle: ConnectionNoodleModel, direction: EnumSocketFlowDirection) {
+	constructor(node: NodeModel, direction: EnumSocketFlowDirection) {
 		this.node = node;
-		this.connectionNoodle = connectionNoodle;
 		this.point = Point.zero;
 		this.flow = direction;
 		this.placement = EnumSocketPlacement.unknown;

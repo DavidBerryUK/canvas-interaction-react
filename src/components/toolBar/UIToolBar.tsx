@@ -9,23 +9,23 @@ import UIfrostedBackground from '../frostedBackground/UIfrostedBackground';
 import UIRadioList from '../radioList/UIRadioList';
 
 interface IProperties {
-	onChangeScene: (scene: EnumDemoScenes) => void;
+	sceneId: EnumDemoScenes;
+	onChangeScene: (sceneId: EnumDemoScenes) => void;
 }
 
 const UIToolBar: React.FC<IProperties> = (props) => {
-	const [option, setOption] = useState<OptionModel>(new OptionModel('', ''));
 	const [options, setOptions] = useState<Array<OptionModel>>(new Array<OptionModel>());
 
 	useEffect(() => {
 		const options = FactorySceneOptions.get();
-		setOption(options[0]);
 		setOptions(options);
 	}, []);
 
 	const handleOnChange = (value: OptionModel) => {
-		setOption(value);
 		props.onChangeScene(getEnumDemoScene(value.id)!);
 	};
+
+	let option = options.find((opt) => opt.id === props.sceneId)!;
 
 	return (
 		<UIfrostedBackground className="ui-toolbar">

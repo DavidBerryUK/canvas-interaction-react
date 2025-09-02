@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import EnumDemoScenes from '../../enums/EnumDemoScenes';
 import FactorySceneProvider from '../../factories/FactorySceneProvider';
 import type ICanvasDocumentViewerSceneProvider from '../../library/canvasDocumentViewer/interfaces/ICanvasDocumentViewerSceneProvider';
@@ -8,20 +8,20 @@ import UIToolBar from '../toolBar/UIToolBar';
 
 const UIApp: React.FC = () => {
 	const viewerRef = useRef<UICanvasDocumentViewerRef>(null);
-
+	const [sceneId, setSceneId] = useState<EnumDemoScenes>(EnumDemoScenes.BurgerBarNodesAndNoodles);
 	const sceneProvider = useRef<ICanvasDocumentViewerSceneProvider>(FactorySceneProvider.get(EnumDemoScenes.BurgerBarNodesAndNoodles));
 
-	const handleOnSceneChangedEvent = (scene: EnumDemoScenes) => {
-		const provider = FactorySceneProvider.get(scene);
+	const handleOnSceneChangedEvent = (sceneId: EnumDemoScenes) => {
+		setSceneId(sceneId);
+		const provider = FactorySceneProvider.get(sceneId);
 		sceneProvider.current = provider;
 		viewerRef.current?.navigate.centerDocument(false);
-		console.log(provider);
 	};
 
 	return (
 		<div>
 			<UICanvasDocumentViewer sceneProvider={sceneProvider} ref={viewerRef} />
-			<UIToolBar onChangeScene={handleOnSceneChangedEvent} />
+			<UIToolBar sceneId={sceneId} onChangeScene={handleOnSceneChangedEvent} />
 		</div>
 	);
 };

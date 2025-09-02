@@ -24,8 +24,6 @@ const useEventHandlersKeyboard = (context: React.RefObject<CanvasContext>, scene
 	};
 
 	const handleKeyDownEvent = (e: KeyboardEvent) => {
-		console.log(`keydown event for provider:${sceneProvider.current.name}`);
-
 		const key = e.key.toLowerCase(); // normalize key
 
 		const actions: Record<string, () => void> = {

@@ -33,6 +33,10 @@ export default class NodesAndNoodlesSceneRenderer implements ICanvasDocumentView
 				NodeRenderer.render(ctx, node);
 			}
 		});
+
+		this.scene.connections.forEach((connection) => {
+			connection.draw(ctx);
+		});
 	}
 
 	private calculateAndCacheBoundingRect(): Rectangle {
